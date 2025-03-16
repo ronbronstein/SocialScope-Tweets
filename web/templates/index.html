@@ -1,0 +1,99 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h3 class="card-title mb-0">Twitter Account Analyzer</h3>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('analyze') }}" method="POST">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Twitter Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text">@</span>
+                            <input type="text" id="username" name="username" class="form-control" 
+                                   placeholder="elonmusk" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Tweet Type</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="tweet_type" 
+                                   id="type_both" value="both" checked>
+                            <label class="form-check-label" for="type_both">
+                                Both tweets and replies
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="tweet_type" 
+                                   id="type_tweets" value="tweets">
+                            <label class="form-check-label" for="type_tweets">
+                                Tweets only (no replies)
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="tweet_type" 
+                                   id="type_replies" value="replies">
+                            <label class="form-check-label" for="type_replies">
+                                Replies only
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="max_tweets" class="form-label">Maximum Tweets</label>
+                        <select id="max_tweets" name="max_tweets" class="form-select">
+                            <option value="100">100 tweets</option>
+                            <option value="200">200 tweets</option>
+                            <option value="500">500 tweets</option>
+                            <option value="1000" selected>1000 tweets</option>
+                            <option value="2000">2000 tweets</option>
+                            <option value="5000">5000 tweets</option>
+                        </select>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="start_date" class="form-label">Start Date (Optional)</label>
+                            <input type="date" id="start_date" name="start_date" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="end_date" class="form-label">End Date (Optional)</label>
+                            <input type="date" id="end_date" name="end_date" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Analyze Twitter Account
+                    </button>
+                </form>
+            </div>
+            <div class="card-footer">
+                <div class="small text-muted">
+                    <p class="mb-0"><strong>Note:</strong> This tool only works with public Twitter accounts.</p>
+                    <p class="mb-0">Analysis time depends on the number of tweets and your internet connection.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">About SocialScope-Tweets</h5>
+            </div>
+            <div class="card-body">
+                <p>SocialScope-Tweets is a powerful tool for analyzing Twitter accounts. It provides:</p>
+                <ul>
+                    <li>Comprehensive tweet collection with customizable filters</li>
+                    <li>Automated topic extraction and sentiment analysis</li>
+                    <li>Writing style pattern recognition</li>
+                    <li>Multiple export formats (CSV, XML, text summary)</li>
+                </ul>
+                <p>Perfect for researchers, marketers, journalists, and social media analysts.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

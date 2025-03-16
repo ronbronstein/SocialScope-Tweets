@@ -116,16 +116,27 @@ def main():
         # Step 8: Save to different formats
         logger.info("Saving tweets...")
         
-        # Save simple CSV (just text and timestamp)
+        # Step 8.1: Save simple CSV (just text and timestamp)
         output_gen.save_tweets_to_csv(tagged_tweets, output_folder, simple=True)
         
-        # Save full CSV with all metadata and tags
+        # Step 8.2: Save enhanced CSV with analysis
         output_gen.save_tweets_to_csv(tagged_tweets, output_folder, simple=False)
         
-        # Save XML with all data and tags
+        # Step 8.3: Save lean XML with style analysis
         xml_file = output_gen.save_tweets_to_xml(tagged_tweets, output_folder, account_info)
         
+        # Step 8.4: Generate human-readable summary text
+        summary_file = output_gen.save_summary_text(tagged_tweets, output_folder, account_info)
+        
         logger.info(f"All done! Output saved to: {output_folder}")
+        
+        # Print a summary of the files generated
+        print(f"\nFiles generated:")
+        print(f"- CSV (simple): {output_folder / 'tweets_simple.csv'}")
+        print(f"- CSV (analysis): {output_folder / 'tweets_analysis.csv'}")  
+        print(f"- XML: {output_folder / 'tweets_lean.xml'}")
+        print(f"- Summary: {output_folder / 'account_summary.txt'}")
+        print(f"- Account info: {output_folder / 'account_info.json'}")
         
     except Exception as e:
         logger.error(f"Error: {e}", exc_info=True)

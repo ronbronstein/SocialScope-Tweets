@@ -1,0 +1,61 @@
+/* Main styles for SocialScope-Tweets Web UI */
+
+body {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.footer {
+    margin-top: auto;
+}
+
+.card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.card-header {
+    font-weight: bold;
+}
+
+/* Job status and log container */
+#log-container {
+    font-family: 'Courier New', monospace;
+    background-color: #212529;
+    color: #20c997;
+    line-height: 1.5;
+}
+
+.log-line {
+    border-bottom: 1px solid #32383e;
+    padding: 4px 0;
+}
+
+/* Progress bar customization */
+.progress {
+    height: 10px;
+    border-radius: 5px;
+}
+
+/* Results page */
+.rounded-circle {
+    object-fit: cover;
+}
+
+/* Fix for mobile */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    pre {
+        font-size: 0.8rem;
+    }
+}

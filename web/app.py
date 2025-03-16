@@ -1,0 +1,320 @@
+"""
+SocialScope-Tweets Web UI - Flask Application
+"""
+
+import os
+import sys
+import json
+import time
+import logging
+from datetime import datetime
+from pathlib import Path
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_from_directory
+import threading
+import queue
+
+# Add project root to Python path for imports
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# Import from the core project
+from src.core.socialdata_client import SocialDataClient
+from src.core.tweet_fetcher import TweetFetcher
+from src.core.tweet_processor import TweetProcessor
+from src.core.output_generator import OutputGenerator
+
+# Initialize Flask app
+app = Flask(__name__)
+app.secret_key = os.urandom(24)
+
+# Add the current date to all templates
+@app.context_processor
+def inject_now():
+    return {'now': datetime.now()}
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('web_ui.log'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
+
+# Global job tracking
+active_jobs = {}
+job_results = {}
+job_logs = {}
+
+def run_analysis_job(job_id, username, tweet_type, max_tweets, start_date, end_date):
+    """Run analysis job in background thread"""
+    try:
+        job_logs[job_id] = []
+        
+        def log_message(message):
+            """Add message to job logs"""
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            job_logs[job_id].append(f"[{timestamp}] {message}")
+            logger.info(f"Job {job_id}: {message}")
+        
+        log_message(f"Starting analysis for @{username}")
+        
+        # Initialize components
+        client = SocialDataClient()
+        fetcher = TweetFetcher(client)
+        processor = TweetProcessor()
+        output_gen = OutputGenerator("output")
+        
+        # Step 1: Fetch account info
+        log_message(f"Fetching account info for @{username}")
+        try:
+            account_info = fetcher.fetch_user_info(username)
+            log_message(f"Account: {account_info['name']} (@{account_info['screen_name']})")
+            log_message(f"Followers: {account_info['followers_count']:,}, Following: {account_info['friends_count']:,}")
+            log_message(f"Tweets: {account_info['statuses_count']:,}")
+        except Exception as e:
+            log_message(f"Error fetching account info: {str(e)}")
+            raise
+        
+        # Step 2: Create output folder
+        output_folder = output_gen.create_output_folder(username)
+        relative_output_path = os.path.relpath(output_folder, "output")
+        log_message(f"Created output folder: {output_folder}")
+        
+        # Step 3: Save account info
+        output_gen.save_account_info(account_info, output_folder)
+        
+        # Step 4: Fetch tweets with progress updates
+        log_message(f"Fetching tweets for @{username}")
+        try:
+            tweets = fetcher.fetch_user_tweets(
+                username,
+                tweet_type=tweet_type,
+                max_tweets=max_tweets,
+                start_date=start_date,
+                end_date=end_date
+            )
+            log_message(f"Fetched {len(tweets)} tweets")
+        except Exception as e:
+            log_message(f"Error fetching tweets: {str(e)}")
+            raise
+        
+        # Step 5: Process tweets
+        log_message("Processing tweets...")
+        processed_tweets = processor.process_tweets(tweets)
+        
+        # Step 6: Extract topics
+        log_message("Extracting topics...")
+        topics = processor.extract_topics(processed_tweets)
+        log_message(f"Found {len(topics)} topics: {', '.join(topics)}")
+        
+        # Step 7: Tag tweets
+        log_message("Tagging tweets with topics and sentiment...")
+        tagged_tweets = processor.tag_tweets(processed_tweets, topics)
+        
+        # Step 8: Save to different formats
+        log_message("Saving tweets to output formats...")
+        
+        # Save simple CSV
+        csv_simple = output_gen.save_tweets_to_csv(tagged_tweets, output_folder, simple=True)
+        log_message(f"Saved simple CSV: {os.path.basename(csv_simple)}")
+        
+        # Save analysis CSV
+        csv_analysis = output_gen.save_tweets_to_csv(tagged_tweets, output_folder, simple=False)
+        log_message(f"Saved analysis CSV: {os.path.basename(csv_analysis)}")
+        
+        # Save lean XML with style analysis
+        xml_file = output_gen.save_tweets_to_xml(tagged_tweets, output_folder, account_info)
+        log_message(f"Saved XML: {os.path.basename(xml_file)}")
+        
+        # Generate human-readable summary text
+        summary_file = output_gen.save_summary_text(tagged_tweets, output_folder, account_info)
+        log_message(f"Saved summary: {os.path.basename(summary_file)}")
+        
+        # Step 9: Prepare result data for display
+        # Try to read and parse summary file for display
+        summary_content = ""
+        try:
+            with open(summary_file, 'r', encoding='utf-8') as f:
+                summary_content = f.read()
+        except Exception as e:
+            log_message(f"Error reading summary file: {str(e)}")
+        
+        # Store results
+        job_results[job_id] = {
+            'status': 'completed',
+            'username': username,
+            'tweet_count': len(tweets),
+            'output_folder': str(output_folder),
+            'relative_path': relative_output_path,
+            'files': {
+                'csv_simple': os.path.basename(csv_simple) if csv_simple else "",
+                'csv_analysis': os.path.basename(csv_analysis) if csv_analysis else "",
+                'xml': os.path.basename(xml_file) if xml_file else "",
+                'summary': os.path.basename(summary_file) if summary_file else "",
+                'account_info': "account_info.json"
+            },
+            'summary_content': summary_content,
+            'account_info': {
+                'name': account_info.get('name', ''),
+                'screen_name': account_info.get('screen_name', ''),
+                'followers': account_info.get('followers_count', 0),
+                'following': account_info.get('friends_count', 0),
+                'tweets': account_info.get('statuses_count', 0),
+                'profile_image': account_info.get('profile_image_url_https', '')
+            }
+        }
+        
+        log_message("Analysis completed successfully!")
+        
+    except Exception as e:
+        logger.error(f"Error in job {job_id}: {str(e)}", exc_info=True)
+        job_results[job_id] = {
+            'status': 'error',
+            'error_message': str(e)
+        }
+        if job_id in job_logs:
+            job_logs[job_id].append(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ERROR: {str(e)}")
+    
+    finally:
+        # Remove from active jobs
+        if job_id in active_jobs:
+            del active_jobs[job_id]
+
+@app.route('/')
+def index():
+    """Render the main page"""
+    return render_template('index.html')
+
+@app.route('/analyze', methods=['POST'])
+def analyze():
+    """Submit a new analysis job"""
+    username = request.form.get('username', '').strip()
+    if not username:
+        flash("Please enter a valid Twitter username", "error")
+        return redirect(url_for('index'))
+    
+    # Remove @ symbol if included
+    if username.startswith('@'):
+        username = username[1:]
+    
+    # Get job parameters
+    tweet_type = request.form.get('tweet_type', 'both')
+    max_tweets = int(request.form.get('max_tweets', 1000))
+    
+    # Parse dates if provided
+    start_date = None
+    end_date = None
+    
+    start_date_str = request.form.get('start_date', '')
+    end_date_str = request.form.get('end_date', '')
+    
+    if start_date_str:
+        try:
+            start_date = datetime.strptime(start_date_str, '%Y-%m-%d')
+        except ValueError:
+            flash("Invalid start date format. Please use YYYY-MM-DD", "error")
+            return redirect(url_for('index'))
+    
+    if end_date_str:
+        try:
+            end_date = datetime.strptime(end_date_str, '%Y-%m-%d')
+        except ValueError:
+            flash("Invalid end date format. Please use YYYY-MM-DD", "error")
+            return redirect(url_for('index'))
+    
+    # Create a job ID
+    job_id = f"{username}_{int(time.time())}"
+    
+    # Start job in a separate thread
+    job_thread = threading.Thread(
+        target=run_analysis_job,
+        args=(job_id, username, tweet_type, max_tweets, start_date, end_date),
+        daemon=True
+    )
+    
+    active_jobs[job_id] = {
+        'start_time': datetime.now(),
+        'username': username,
+        'status': 'running'
+    }
+    
+    job_thread.start()
+    
+    # Redirect to job status page
+    return redirect(url_for('job_status', job_id=job_id))
+
+@app.route('/job/<job_id>')
+def job_status(job_id):
+    """Show job status page"""
+    # Check if the job exists
+    if job_id not in active_jobs and job_id not in job_results:
+        flash("Job not found", "error")
+        return redirect(url_for('index'))
+    
+    # If job is complete, show results
+    if job_id in job_results:
+        result = job_results[job_id]
+        logs = job_logs.get(job_id, [])
+        
+        # If it was successful, render the results template
+        if result['status'] == 'completed':
+            return render_template('results.html', result=result, logs=logs, job_id=job_id)
+        else:
+            # If it failed, show error
+            flash(f"Analysis failed: {result.get('error_message', 'Unknown error')}", "error")
+            return render_template('job_status.html', job_id=job_id, error=True, logs=logs)
+    
+    # If job is still running, show status page
+    return render_template('job_status.html', job_id=job_id)
+
+@app.route('/api/job_status/<job_id>')
+def api_job_status(job_id):
+    """API endpoint to get job status for AJAX polling"""
+    status = "not_found"
+    progress = 0
+    message = "Job not found"
+    
+    if job_id in active_jobs:
+        status = "running"
+        message = f"Analyzing tweets for @{active_jobs[job_id]['username']}..."
+    elif job_id in job_results:
+        status = job_results[job_id]['status']
+        message = "Analysis complete" if status == "completed" else job_results[job_id].get('error_message', 'Analysis failed')
+    
+    logs = job_logs.get(job_id, [])
+    
+    return jsonify({
+        "status": status,
+        "message": message,
+        "logs": logs[-10:] if logs else []  # Return last 10 logs
+    })
+
+@app.route('/download/<path:job_path>/<filename>')
+def download_file(job_path, filename):
+    """Download a result file"""
+    directory = os.path.join('output', job_path)
+    return send_from_directory(directory, filename, as_attachment=True)
+
+@app.route('/jobs')
+def list_jobs():
+    """List all completed jobs"""
+    completed_jobs = []
+    
+    for job_id, result in job_results.items():
+        if result['status'] == 'completed':
+            completed_jobs.append({
+                'job_id': job_id,
+                'username': result['username'],
+                'tweet_count': result['tweet_count'],
+                'date': job_id.split('_')[-1]  # Extract timestamp from job ID
+            })
+    
+    return render_template('jobs.html', jobs=completed_jobs)
+
+if __name__ == '__main__':
+    # Make sure output directory exists
+    os.makedirs('output', exist_ok=True)
+    # Run Flask app
+    app.run(debug=True, host='0.0.0.0', port=8000)

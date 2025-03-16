@@ -1,0 +1,90 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-10 offset-md-1">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-check-circle"></i> Analysis Complete
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        {% if result.account_info.profile_image %}
+                        <img src="{{ result.account_info.profile_image }}" alt="Profile" class="img-thumbnail rounded-circle mb-3" style="width: 150px; height: 150px;">
+                        {% else %}
+                        <div class="bg-secondary rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 150px; height: 150px;">
+                            <i class="fas fa-user fa-5x text-white"></i>
+                        </div>
+                        {% endif %}
+                        <h4>@{{ result.account_info.screen_name }}</h4>
+                        <p class="lead">{{ result.account_info.name }}</p>
+                        <div class="d-flex justify-content-around mb-3">
+                            <div class="text-center">
+                                <h5>{{ "{:,}".format(result.account_info.followers) }}</h5>
+                                <small class="text-muted">Followers</small>
+                            </div>
+                            <div class="text-center">
+                                <h5>{{ "{:,}".format(result.account_info.following) }}</h5>
+                                <small class="text-muted">Following</small>
+                            </div>
+                            <div class="text-center">
+                                <h5>{{ "{:,}".format(result.account_info.tweets) }}</h5>
+                                <small class="text-muted">Tweets</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <h4>Analysis Summary</h4>
+                        <p>Successfully analyzed <strong>{{ "{:,}".format(result.tweet_count) }}</strong> tweets from <strong>@{{ result.username }}</strong>.</p>
+                        
+                        <h5 class="mt-4">Download Results</h5>
+                        <div class="list-group">
+                            <a href="{{ url_for('download_file', job_path=result.relative_path, filename=result.files.csv_simple) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-file-csv"></i> Simple CSV (just tweet text and timestamp)
+                            </a>
+                            <a href="{{ url_for('download_file', job_path=result.relative_path, filename=result.files.csv_analysis) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-file-csv"></i> Analysis CSV (tweets with engagement and sentiment)
+                            </a>
+                            <a href="{{ url_for('download_file', job_path=result.relative_path, filename=result.files.xml) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-file-code"></i> XML (complete analysis with style patterns)
+                            </a>
+                            <a href="{{ url_for('download_file', job_path=result.relative_path, filename=result.files.summary) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-file-alt"></i> Summary Text (human-readable analysis)
+                            </a>
+                            <a href="{{ url_for('download_file', job_path=result.relative_path, filename=result.files.account_info) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-file-code"></i> Account Info JSON
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0">Writing Style Analysis</h4>
+            </div>
+            <div class="card-body">
+                <pre class="bg-light p-3 rounded" style="max-height: 500px; overflow-y: auto;">{{ result.summary_content }}</pre>
+            </div>
+            <div class="card-footer">
+                <div class="text-center">
+                    <a href="{{ url_for('index') }}" class="btn btn-primary me-2">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                    <a href="{{ url_for('list_jobs') }}" class="btn btn-secondary">
+                        <i class="fas fa-list"></i> All Analyses
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
