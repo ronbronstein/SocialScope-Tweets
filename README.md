@@ -1,29 +1,26 @@
 # SocialScope-Tweets 🚀
 
-A Matrix-themed Twitter scraper that lets you grab tweets, replies, or both from any public Twitter account. The tool features a clean UI and is designed to be easy to use while providing comprehensive data collection capabilities.
-
-![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+A powerful tool for fetching, analyzing, and exporting Twitter/X data with tagging and multiple output formats.
 
 ## Features 🎯
 
-* **Targeted Scraping**: Collect tweets, replies, or both from any public Twitter account
+* **Flexible Data Collection**: Fetch tweets, replies, or both from any public Twitter account
+* **Smart Content Analysis**: Automated topic extraction, sentiment analysis, and writing style detection
+* **Multiple Output Formats**: Export data to simple CSV, detailed CSV, and structured XML
 * **Date Filtering**: Specify custom date ranges for data collection
-* **Rate Limiting**: Built-in controls to prevent API throttling
-* **Progress Tracking**: Real-time feedback on the scraping process
-* **CSV Export**: All data is saved in a structured CSV format
-* **Matrix UI**: Enjoy a cyberpunk-inspired interface
+* **Command-line Tools**: Simple scripts for account analysis and comprehensive tweet scraping
+* **Organization**: Timestamped output folders with consistent file naming
 
 ## What Data You Get 📊
 
-SocialScope-Tweets collects comprehensive tweet data including:
+SocialScope-Tweets collects and processes comprehensive tweet data including:
 
 * Tweet text and creation timestamps
-* Engagement metrics (likes, retweets, quotes, views, replies)
+* Engagement metrics (likes, retweets, replies)
 * Content categorization (is_reply, is_retweet)
-* Media attachment counts
-* Hashtags used in tweets
-* Account mentions
-* URLs shared in tweets
+* Automatically extracted topics from tweet content
+* Sentiment analysis (positive, negative, neutral)
+* Writing style detection (question, exclamatory, emphatic, etc.)
 
 ## Prerequisites 📋
 
@@ -46,43 +43,121 @@ pip install -r requirements.txt
 
 3. Create a `.env` file with your API key:
 ```bash
-# Create from example
-cp .env.example .env
-# Edit the file to add your API key
+# Create the .env file
+echo "SOCIALDATA_API_KEY=your_api_key_here" > .env
 ```
 
 ## Usage 💻
 
-1. Start the application:
+### Quick Account Analysis
+
+To get a quick overview of a Twitter account:
+
 ```bash
-python main.py
+python scripts/count_tweets.py elonmusk
 ```
 
-2. In the GUI:
-   * Enter the target username (without @)
-   * Set your desired date range
-   * Choose what to collect (tweets/replies/both)
-   * Set the maximum number of tweets to collect
-   * Click "START SCRAPING"
+This will display basic account information including:
+- Username and name
+- Account creation date
+- Location and bio
+- Tweet statistics (count, followers, following)
 
-3. Monitor progress in the status section
-4. When complete, find your data in the `output` folder as CSV files
-5. Use the "OPEN FILE" button to directly access the most recently saved file
+### Comprehensive Tweet Analysis
 
-## Folder Structure 📁
+For full tweet analysis with CSV and XML output:
+
+```bash
+python scripts/tweet_analyzer.py elonmusk --type both --max 200 --start-date 2023-01-01 --end-date 2023-12-31
+```
+
+Options:
+- `username`: Twitter username without @
+- `--type`: Type of tweets to fetch (`tweets`, `replies`, or `both`)
+- `--max`: Maximum number of tweets to fetch (default: 1000)
+- `--start-date`: Start date in YYYY-MM-DD format
+- `--end-date`: End date in YYYY-MM-DD format
+- `--output-dir`: Directory for output files (default: output)
+- `--verbose`: Enable verbose logging
+
+This will:
+1. Fetch account information
+2. Fetch tweets based on your filters
+3. Process tweets and extract topics
+4. Tag tweets with topics, sentiment, and writing style
+5. Save results in multiple formats to the output directory:
+   - `tweets_simple.csv`: Just tweet text and timestamp
+   - `tweets_full.csv`: All tweet data with tags
+   - `tweets.xml`: Complete XML representation with tags
+   - `account_info.json`: Account information
+
+The output will be saved in a folder named with the username and a timestamp, like: `output/elonmusk_20230215_123456/`
+
+## Repository Structure 📁
 
 ```
 SocialScope-Tweets/
-├── main.py            # GUI application
-├── scraper.py         # Twitter scraping logic
-├── config.json.example # Example configuration
-├── .env.example       # Example environment variables
-├── requirements.txt   # Python dependencies
-├── LICENSE            # MIT License
-├── CONTRIBUTING.md    # Contribution guidelines
-├── README.md          # This file
-├── logs/              # Application logs (created at runtime)
-└── output/            # Scraped data output (created at runtime)
+├── scripts/                # Command-line scripts
+│   ├── tweet_analyzer.py   # Main analysis script
+│   └── count_tweets.py     # Account overview script
+├── src/                    # Source code
+│   └── core/               # Core modules
+│       ├── socialdata_client.py  # API client
+│       ├── tweet_fetcher.py      # Tweet fetching
+│       ├── tweet_processor.py    # Processing and tagging
+│       └── output_generator.py   # CSV/XML generation
+├── output/                 # Output directory
+├── logs/                   # Log files
+├── .env                    # API key (you need to create this)
+├── .gitignore              # Git ignore file
+├── requirements.txt        # Python dependencies
+└── README.md               # This file
+```
+
+## XML Output Format 📄
+
+The XML output is structured for easy analysis:
+
+```xml
+<TwitterData>
+  <Metadata>
+    <ExportDate>2023-09-15T12:34:56</ExportDate>
+  </Metadata>
+  <Account>
+    <!-- Account information -->
+  </Account>
+  <TagReference>
+    <!-- All topics and styles found in the dataset -->
+    <Topics>
+      <Topic>ai</Topic>
+      <Topic>space</Topic>
+      <!-- ... -->
+    </Topics>
+    <Styles>
+      <Style>question</Style>
+      <Style>exclamatory</Style>
+      <!-- ... -->
+    </Styles>
+  </TagReference>
+  <Tweets>
+    <Tweet>
+      <ID>123456789</ID>
+      <CreatedAt>2023-09-14T10:30:00</CreatedAt>
+      <Text>This is a tweet about AI!</Text>
+      <!-- More tweet data -->
+      <Tags>
+        <Topics>
+          <Topic>ai</Topic>
+        </Topics>
+        <Sentiment>positive</Sentiment>
+        <Styles>
+          <Style>exclamatory</Style>
+        </Styles>
+      </Tags>
+    </Tweet>
+    <!-- More tweets -->
+  </Tweets>
+</TwitterData>
 ```
 
 ## Limitations ⚠️
@@ -91,3 +166,7 @@ SocialScope-Tweets/
 * Requires an API key from socialdata.tools
 * Rate limits apply based on your API tier
 * Large requests may take significant time to complete
+
+## License 📝
+
+MIT License - See LICENSE file for details
