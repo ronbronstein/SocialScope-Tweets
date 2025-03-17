@@ -14,11 +14,11 @@
                 </h3>
             </div>
             <div class="card-body">
-                <div id="status-message" class="alert alert-info mb-4">
+                <div id="status-message" class="alert {% if error %}alert-danger{% else %}alert-info{% endif %} mb-4">
                     {% if error %}
-                    There was an error processing your request.
+                    <i class="fas fa-exclamation-circle"></i> There was an error processing your request.
                     {% else %}
-                    Please wait while we analyze the Twitter account...
+                    <i class="fas fa-info-circle"></i> Please wait while we analyze the Twitter account...
                     {% endif %}
                 </div>
                 
@@ -40,11 +40,14 @@
                     </a>
                 </div>
                 {% else %}
-                <div class="mt-4 text-center">
-                    <p class="text-muted">Please don't close this page. You'll be redirected automatically when the analysis is complete.</p>
+                <div class="mt-4">
+                    <p class="text-muted text-center">Please don't close this page. You'll be redirected automatically when the analysis is complete.</p>
                     <div class="progress">
                         <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 0%"></div>
                     </div>
+                    <p class="text-center text-muted mt-2">
+                        <small>Analysis time depends on the number of tweets and account activity.</small>
+                    </p>
                 </div>
                 {% endif %}
             </div>
@@ -79,9 +82,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     data.logs.forEach(log => {
                         if (!existingLogs.includes(log)) {
                             const logLine = document.createElement('div');
-                            logLine.className = 'log-line';
+                            logLine.className = 'log-line log-line-new';
                             logLine.textContent = log;
                             logContainer.appendChild(logLine);
+                            
+                            // Remove animation class after animation completes
+                            setTimeout(() => {
+                                logLine.classList.remove('log-line-new');
+                            }, 2000);
                         }
                     });
                     
@@ -89,21 +97,40 @@ document.addEventListener('DOMContentLoaded', function() {
                     logContainer.scrollTop = logContainer.scrollHeight;
                 }
                 
-                // Update progress based on logs (simple estimation)
+                // Update progress based on logs (intelligent estimation)
                 if (data.logs) {
                     let progressPercent = 0;
                     
-                    if (data.logs.some(log => log.includes("Fetching account info"))) progressPercent = 10;
-                    if (data.logs.some(log => log.includes("Created output folder"))) progressPercent = 20;
-                    if (data.logs.some(log => log.includes("Fetching tweets"))) progressPercent = 30;
-                    if (data.logs.some(log => log.includes("Fetched"))) progressPercent = 50;
-                    if (data.logs.some(log => log.includes("Processing tweets"))) progressPercent = 60;
-                    if (data.logs.some(log => log.includes("Extracting topics"))) progressPercent = 70;
-                    if (data.logs.some(log => log.includes("Tagging tweets"))) progressPercent = 80;
-                    if (data.logs.some(log => log.includes("Saving tweets"))) progressPercent = 90;
+                    // Analyze logs to determine progress
+                    if (data.logs.some(log => log.includes("Starting analysis"))) progressPercent = Math.max(progressPercent, 5);
+                    if (data.logs.some(log => log.includes("Fetching account info"))) progressPercent = Math.max(progressPercent, 10);
+                    if (data.logs.some(log => log.includes("Account:"))) progressPercent = Math.max(progressPercent, 20);
+                    if (data.logs.some(log => log.includes("Created output folder"))) progressPercent = Math.max(progressPercent, 25);
+                    if (data.logs.some(log => log.includes("Fetching tweets"))) progressPercent = Math.max(progressPercent, 30);
+                    
+                    // Check for fetch progress 
+                    const fetchMatch = data.logs.find(log => log.includes("Fetched") && log.includes("tweets"));
+                    if (fetchMatch) {
+                        progressPercent = Math.max(progressPercent, 50);
+                    }
+                    
+                    if (data.logs.some(log => log.includes("Processing tweets"))) progressPercent = Math.max(progressPercent, 60);
+                    if (data.logs.some(log => log.includes("Extracting topics"))) progressPercent = Math.max(progressPercent, 70);
+                    if (data.logs.some(log => log.includes("Found") && log.includes("topics"))) progressPercent = Math.max(progressPercent, 75);
+                    if (data.logs.some(log => log.includes("Tagging tweets"))) progressPercent = Math.max(progressPercent, 80);
+                    if (data.logs.some(log => log.includes("Saving tweets"))) progressPercent = Math.max(progressPercent, 85);
+                    if (data.logs.some(log => log.includes("Saved simple CSV"))) progressPercent = Math.max(progressPercent, 90);
+                    if (data.logs.some(log => log.includes("Saved analysis CSV"))) progressPercent = Math.max(progressPercent, 92);
+                    if (data.logs.some(log => log.includes("Saved XML"))) progressPercent = Math.max(progressPercent, 95);
+                    if (data.logs.some(log => log.includes("Saved summary"))) progressPercent = Math.max(progressPercent, 97);
                     if (data.logs.some(log => log.includes("completed successfully"))) progressPercent = 100;
                     
                     progressBar.style.width = `${progressPercent}%`;
+                    
+                    // Add aria attributes for accessibility
+                    progressBar.setAttribute('aria-valuenow', progressPercent);
+                    progressBar.setAttribute('aria-valuemin', 0);
+                    progressBar.setAttribute('aria-valuemax', 100);
                 }
                 
                 // Check if job is complete

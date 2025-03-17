@@ -11,8 +11,34 @@
             </div>
             <div class="card-body">
                 {% if jobs %}
+                <div class="mb-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" id="jobSearch" class="form-control" placeholder="Search by username...">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <select id="jobSortBy" class="form-select">
+                                <option value="date-desc">Newest First</option>
+                                <option value="date-asc">Oldest First</option>
+                                <option value="username-asc">Username (A-Z)</option>
+                                <option value="username-desc">Username (Z-A)</option>
+                                <option value="count-desc">Most Tweets</option>
+                                <option value="count-asc">Least Tweets</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <button id="clearFilters" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-times"></i> Clear Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
+                    <table class="table table-striped table-hover" id="jobsTable">
                         <thead>
                             <tr>
                                 <th>Username</th>
@@ -37,6 +63,12 @@
                         </tbody>
                     </table>
                 </div>
+                
+                <!-- No results message (hidden by default) -->
+                <div id="noResults" class="text-center py-5" style="display: none;">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <p class="lead">No matching analyses found.</p>
+                </div>
                 {% else %}
                 <div class="text-center py-5">
                     <i class="fas fa-search fa-3x text-muted mb-3"></i>
@@ -50,4 +82,80 @@
         </div>
     </div>
 </div>
+
+<!-- Add JavaScript for search and filter functionality -->
+{% if jobs %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('jobSearch');
+    const sortSelect = document.getElementById('jobSortBy');
+    const clearButton = document.getElementById('clearFilters');
+    const table = document.getElementById('jobsTable');
+    const tableBody = table.querySelector('tbody');
+    const noResults = document.getElementById('noResults');
+    
+    // Get all rows for sorting/filtering
+    const rows = Array.from(tableBody.querySelectorAll('tr'));
+    
+    // Function to filter and sort the table
+    function updateTable() {
+        // Get current filter values
+        const searchText = searchInput.value.toLowerCase();
+        const sortValue = sortSelect.value;
+        
+        // First filter rows
+        const filteredRows = rows.filter(row => {
+            const username = row.cells[0].textContent.toLowerCase();
+            return username.includes(searchText);
+        });
+        
+        // Then sort rows
+        filteredRows.sort((a, b) => {
+            if (sortValue === 'date-desc' || sortValue === 'date-asc') {
+                const dateA = new Date(a.cells[2].textContent);
+                const dateB = new Date(b.cells[2].textContent);
+                return sortValue === 'date-asc' ? dateA - dateB : dateB - dateA;
+            } 
+            else if (sortValue === 'username-asc' || sortValue === 'username-desc') {
+                const usernameA = a.cells[0].textContent.toLowerCase();
+                const usernameB = b.cells[0].textContent.toLowerCase();
+                return sortValue === 'username-asc' ? 
+                    usernameA.localeCompare(usernameB) : 
+                    usernameB.localeCompare(usernameA);
+            }
+            else if (sortValue === 'count-asc' || sortValue === 'count-desc') {
+                const countA = parseInt(a.cells[1].textContent.replace(/,/g, ''));
+                const countB = parseInt(b.cells[1].textContent.replace(/,/g, ''));
+                return sortValue === 'count-asc' ? countA - countB : countB - countA;
+            }
+        });
+        
+        // Clear table and append sorted/filtered rows
+        tableBody.innerHTML = '';
+        
+        if (filteredRows.length === 0) {
+            table.style.display = 'none';
+            noResults.style.display = 'block';
+        } else {
+            filteredRows.forEach(row => tableBody.appendChild(row));
+            table.style.display = 'table';
+            noResults.style.display = 'none';
+        }
+    }
+    
+    // Add event listeners
+    searchInput.addEventListener('input', updateTable);
+    sortSelect.addEventListener('change', updateTable);
+    
+    clearButton.addEventListener('click', function() {
+        searchInput.value = '';
+        sortSelect.value = 'date-desc';
+        updateTable();
+    });
+    
+    // Initial sort
+    updateTable();
+});
+</script>
+{% endif %}
 {% endblock %}

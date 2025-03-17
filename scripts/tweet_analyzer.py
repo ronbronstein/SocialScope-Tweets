@@ -2,7 +2,7 @@
 """
 Tweet Analyzer - Main script for fetching, processing, and saving tweets
 """
-
+from src.core.language_analyzer_light import LightweightLanguageAnalyzer
 import argparse
 import logging
 import sys
@@ -58,6 +58,8 @@ def main():
                       help='Directory for output files (default: output)')
     parser.add_argument('--verbose', action='store_true',
                       help='Enable verbose logging')
+    parser.add_argument('--skip-advanced', action='store_true',
+                    help='Skip advanced language analysis (faster, but less insightful)')
     
     args = parser.parse_args()
     
@@ -113,6 +115,18 @@ def main():
         logger.info("Tagging tweets...")
         tagged_tweets = processor.tag_tweets(processed_tweets, topics)
         
+        # Step 7.5: Perform lightweight language analysis (new)
+        if not args.skip_advanced:
+            logger.info("Performing advanced language analysis...")
+            analyzer = LightweightLanguageAnalyzer()
+            advanced_analysis = analyzer.analyze(tagged_tweets)
+            
+            # Save advanced analysis as JSON for reference
+            advanced_json = output_folder / "advanced_analysis.json"
+            with open(advanced_json, 'w', encoding='utf-8') as f:
+                json.dump(advanced_analysis, f, indent=2)
+            logger.info(f"Saved advanced analysis to {advanced_json}")
+
         # Step 8: Save to different formats
         logger.info("Saving tweets...")
         

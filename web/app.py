@@ -12,6 +12,8 @@ from pathlib import Path
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_from_directory
 import threading
 import queue
+from werkzeug.exceptions import HTTPException
+import traceback
 
 # Add project root to Python path for imports
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -48,7 +50,7 @@ job_results = {}
 job_logs = {}
 
 def run_analysis_job(job_id, username, tweet_type, max_tweets, start_date, end_date):
-    """Run analysis job in background thread"""
+    """Run analysis job in background thread with improved error handling"""
     try:
         job_logs[job_id] = []
         
@@ -60,12 +62,16 @@ def run_analysis_job(job_id, username, tweet_type, max_tweets, start_date, end_d
         
         log_message(f"Starting analysis for @{username}")
         
-        # Initialize components
-        client = SocialDataClient()
-        fetcher = TweetFetcher(client)
-        processor = TweetProcessor()
-        output_gen = OutputGenerator("output")
-        
+        # Initialize components with better error handling
+        try:
+            client = SocialDataClient()
+            fetcher = TweetFetcher(client)
+            processor = TweetProcessor()
+            output_gen = OutputGenerator("output")
+        except Exception as e:
+            log_message(f"Error initializing components: {str(e)}")
+            raise
+            
         # Step 1: Fetch account info
         log_message(f"Fetching account info for @{username}")
         try:
@@ -78,12 +84,20 @@ def run_analysis_job(job_id, username, tweet_type, max_tweets, start_date, end_d
             raise
         
         # Step 2: Create output folder
-        output_folder = output_gen.create_output_folder(username)
-        relative_output_path = os.path.relpath(output_folder, "output")
-        log_message(f"Created output folder: {output_folder}")
+        try:
+            output_folder = output_gen.create_output_folder(username)
+            relative_output_path = os.path.relpath(output_folder, "output")
+            log_message(f"Created output folder: {output_folder}")
+        except Exception as e:
+            log_message(f"Error creating output folder: {str(e)}")
+            raise
         
         # Step 3: Save account info
-        output_gen.save_account_info(account_info, output_folder)
+        try:
+            output_gen.save_account_info(account_info, output_folder)
+        except Exception as e:
+            log_message(f"Error saving account info: {str(e)}")
+            raise
         
         # Step 4: Fetch tweets with progress updates
         log_message(f"Fetching tweets for @{username}")
@@ -102,44 +116,75 @@ def run_analysis_job(job_id, username, tweet_type, max_tweets, start_date, end_d
         
         # Step 5: Process tweets
         log_message("Processing tweets...")
-        processed_tweets = processor.process_tweets(tweets)
+        try:
+            processed_tweets = processor.process_tweets(tweets)
+        except Exception as e:
+            log_message(f"Error processing tweets: {str(e)}")
+            raise
         
         # Step 6: Extract topics
         log_message("Extracting topics...")
-        topics = processor.extract_topics(processed_tweets)
-        log_message(f"Found {len(topics)} topics: {', '.join(topics)}")
+        try:
+            topics = processor.extract_topics(processed_tweets)
+            log_message(f"Found {len(topics)} topics: {', '.join(topics)}")
+        except Exception as e:
+            log_message(f"Error extracting topics: {str(e)}")
+            raise
         
         # Step 7: Tag tweets
         log_message("Tagging tweets with topics and sentiment...")
-        tagged_tweets = processor.tag_tweets(processed_tweets, topics)
+        try:
+            tagged_tweets = processor.tag_tweets(processed_tweets, topics)
+        except Exception as e:
+            log_message(f"Error tagging tweets: {str(e)}")
+            raise
         
         # Step 8: Save to different formats
         log_message("Saving tweets to output formats...")
         
+        csv_simple = ""
+        csv_analysis = ""
+        xml_file = ""
+        summary_file = ""
+        
         # Save simple CSV
-        csv_simple = output_gen.save_tweets_to_csv(tagged_tweets, output_folder, simple=True)
-        log_message(f"Saved simple CSV: {os.path.basename(csv_simple)}")
+        try:
+            csv_simple = output_gen.save_tweets_to_csv(tagged_tweets, output_folder, simple=True)
+            log_message(f"Saved simple CSV: {os.path.basename(csv_simple)}")
+        except Exception as e:
+            log_message(f"Error saving simple CSV: {str(e)}")
+            # Continue with other formats
         
         # Save analysis CSV
-        csv_analysis = output_gen.save_tweets_to_csv(tagged_tweets, output_folder, simple=False)
-        log_message(f"Saved analysis CSV: {os.path.basename(csv_analysis)}")
+        try:
+            csv_analysis = output_gen.save_tweets_to_csv(tagged_tweets, output_folder, simple=False)
+            log_message(f"Saved analysis CSV: {os.path.basename(csv_analysis)}")
+        except Exception as e:
+            log_message(f"Error saving analysis CSV: {str(e)}")
         
         # Save lean XML with style analysis
-        xml_file = output_gen.save_tweets_to_xml(tagged_tweets, output_folder, account_info)
-        log_message(f"Saved XML: {os.path.basename(xml_file)}")
+        try:
+            xml_file = output_gen.save_tweets_to_xml(tagged_tweets, output_folder, account_info)
+            log_message(f"Saved XML: {os.path.basename(xml_file)}")
+        except Exception as e:
+            log_message(f"Error saving XML: {str(e)}")
         
         # Generate human-readable summary text
-        summary_file = output_gen.save_summary_text(tagged_tweets, output_folder, account_info)
-        log_message(f"Saved summary: {os.path.basename(summary_file)}")
+        try:
+            summary_file = output_gen.save_summary_text(tagged_tweets, output_folder, account_info)
+            log_message(f"Saved summary: {os.path.basename(summary_file)}")
+        except Exception as e:
+            log_message(f"Error saving summary: {str(e)}")
         
         # Step 9: Prepare result data for display
-        # Try to read and parse summary file for display
         summary_content = ""
-        try:
-            with open(summary_file, 'r', encoding='utf-8') as f:
-                summary_content = f.read()
-        except Exception as e:
-            log_message(f"Error reading summary file: {str(e)}")
+        
+        if summary_file:
+            try:
+                with open(summary_file, 'r', encoding='utf-8') as f:
+                    summary_content = f.read()
+            except Exception as e:
+                log_message(f"Error reading summary file: {str(e)}")
         
         # Store results
         job_results[job_id] = {
@@ -169,10 +214,12 @@ def run_analysis_job(job_id, username, tweet_type, max_tweets, start_date, end_d
         log_message("Analysis completed successfully!")
         
     except Exception as e:
-        logger.error(f"Error in job {job_id}: {str(e)}", exc_info=True)
+        error_details = traceback.format_exc()
+        logger.error(f"Error in job {job_id}: {str(e)}\n{error_details}")
         job_results[job_id] = {
             'status': 'error',
-            'error_message': str(e)
+            'error_message': str(e),
+            'error_details': error_details
         }
         if job_id in job_logs:
             job_logs[job_id].append(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ERROR: {str(e)}")
@@ -313,6 +360,63 @@ def list_jobs():
     
     return render_template('jobs.html', jobs=completed_jobs)
 
+# -----------------------------
+#   Custom Error Handlers
+# -----------------------------
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template(
+        'error.html',
+        error_code=404,
+        error_message="Page Not Found",
+        error_details="The requested page does not exist."
+    ), 404
+
+@app.errorhandler(500)
+def server_error(e):
+    # Log the error for debugging
+    app.logger.error(f"500 error: {str(e)}\n{traceback.format_exc()}")
+    return render_template(
+        'error.html',
+        error_code=500,
+        error_message="Server Error",
+        error_details="Something went wrong on our end. Please try again later."
+    ), 500
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    # Log the error
+    app.logger.error(f"Unhandled exception: {str(e)}\n{traceback.format_exc()}")
+    
+    # Handle HTTP exceptions differently
+    if isinstance(e, HTTPException):
+        return render_template(
+            'error.html',
+            error_code=e.code,
+            error_message=e.name,
+            error_details=e.description
+        ), e.code
+    
+    # For non-HTTP exceptions, return a 500 error
+    return render_template(
+        'error.html',
+        error_code=500,
+        error_message="Unexpected Error",
+        error_details="An unexpected error occurred. Our team has been notified."
+    ), 500
+
+# -----------------------------
+#   Datetime Filter
+# -----------------------------
+@app.template_filter('datetime')
+def format_datetime(timestamp):
+    """Format a timestamp as a readable date"""
+    date = datetime.fromtimestamp(int(timestamp))
+    return date.strftime('%B %d, %Y %H:%M')
+
+# -----------------------------
+#   Main Entry
+# -----------------------------
 if __name__ == '__main__':
     # Make sure output directory exists
     os.makedirs('output', exist_ok=True)
