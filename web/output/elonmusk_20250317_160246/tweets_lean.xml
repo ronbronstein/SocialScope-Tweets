@@ -1,0 +1,363 @@
+<?xml version="1.0" ?>
+<TwitterData ExportDate="2025-03-17T16:03:00.748216">
+  <Account Username="elonmusk" Name="Elon Musk" FollowersCount="219906705" FollowingCount="1088" TweetCount="74600" CreatedAt="2009-06-02T20:12:29.000000Z"/>
+  <StyleAnalysis>
+    <GeneralMetrics>
+      <Item Name="TweetCount" Value="100"/>
+      <Item Name="AvgCharsPerTweet" Value="38.3"/>
+      <Item Name="AvgWordsPerTweet" Value="5.8"/>
+      <Item Name="AvgSentencesPerTweet" Value="1.3"/>
+      <Item Name="ReplyPercentage" Value="57.0"/>
+      <Item Name="RetweetPercentage" Value="0.0"/>
+    </GeneralMetrics>
+    <VocabularyMetrics>
+      <Item Name="UniqueWordCount" Value="349"/>
+      <Item Name="VocabularyDiversity" Value="0.607"/>
+      <Item Name="MostFrequentWords" Value="{'the': 21, 'is': 15, 'to': 15, 'of': 10, 'this': 8, 'will': 7, 'that': 6, 'and': 5, 'crazy': 5, 'it': 5, 'has': 4, 'at': 4, 'be': 4, 'they': 4, 'in': 4, 'spacex': 4, 'dragon': 4, 'true': 4, '@grok': 4, 'government': 4}"/>
+    </VocabularyMetrics>
+    <SentimentDistribution>
+      <Item Name="positive" Value="11.0"/>
+      <Item Name="negative" Value="5.0"/>
+      <Item Name="neutral" Value="84.0"/>
+    </SentimentDistribution>
+    <StylePatterns>
+      <Item Name="WritingStyles" Value="{'conversational': 60.0, 'reference': 14.0, 'standard': 26.0, 'exclamatory': 11.0, 'question': 1.0}"/>
+      <Item Name="SentenceStarters" Value="{'https://t': 8, 'the': 6, '@stillgray': 4, '@visegrad24': 3, 'spacex': 3, '@marionawfal': 3, '@cb_doge': 3, '@basedmikelee': 2, '@amuse': 2, '@nayibbukele': 2}"/>
+      <Item Name="SentenceEndings" Value="{'https://t': 14, 'true': 4, 'yes': 3, '❤️': 3, 'wow': 3, 'crazy': 2, 'yeah': 2, '🔥🔥': 2, 'question': 2, 'exactly': 2}"/>
+      <Item Name="PunctuationUsage" Value="{'!': 0.37, '?': 0.03, '.': 0.84, ',': 0.31, ':': 0.37, '-': 0.1}"/>
+    </StylePatterns>
+    <CommonPhrases>
+      <Item Value="the left"/>
+      <Item Value="this is"/>
+      <Item Value="should be"/>
+      <Item Value="spacex dragon"/>
+      <Item Value="space station"/>
+      <Item Value="the government"/>
+      <Item Value="that is"/>
+      <Item Value="@cb_doge @grok"/>
+      <Item Value="to make"/>
+      <Item Value="spacex will"/>
+      <Item Value="of earth’s"/>
+      <Item Value="earth’s payload"/>
+      <Item Value="payload mass"/>
+      <Item Value="mass to"/>
+      <Item Value="to orbit"/>
+    </CommonPhrases>
+    <TypicalFormats>
+      <Item Value="Frequently includes @mentions"/>
+    </TypicalFormats>
+  </StyleAnalysis>
+  <Tweets>
+    <Tweet ID="1901633468208967702" CreatedAt="2025-03-17T13:55:24.000000Z" Retweets="70" Likes="1004" Replies="85" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@JDVance 💯</Text>
+    </Tweet>
+    <Tweet ID="1901624569716150280" CreatedAt="2025-03-17T13:20:02.000000Z" Retweets="2688" Likes="13419" Replies="1582" IsReply="false" IsRetweet="false" Topics="left" Sentiment="neutral" Style="reference">
+      <Text>The list of “enemies” on the right or left has changed, as the left is now pro war and has captured the judiciary, but the general principle is timeless
+ https://t.co/fN1abDrZx5</Text>
+    </Tweet>
+    <Tweet ID="1901617443853791642" CreatedAt="2025-03-17T12:51:43.000000Z" Retweets="161" Likes="1376" Replies="172" IsReply="true" IsRetweet="false" Topics="crazy" Sentiment="neutral" Style="conversational">
+      <Text>@PeterSweden7 This is crazy</Text>
+    </Tweet>
+    <Tweet ID="1901614505672515881" CreatedAt="2025-03-17T12:40:03.000000Z" Retweets="3484" Likes="23502" Replies="2362" IsReply="false" IsRetweet="false" Topics="" Sentiment="negative" Style="standard">
+      <Text>The very worst judges – those who repeatedly flout the law – should at least be put to an impeachment vote, whether that vote succeeds or not.</Text>
+    </Tweet>
+    <Tweet ID="1901611544988819655" CreatedAt="2025-03-17T12:28:17.000000Z" Retweets="7641" Likes="40944" Replies="3267" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="standard">
+      <Text>Yeah</Text>
+    </Tweet>
+    <Tweet ID="1901611272782639599" CreatedAt="2025-03-17T12:27:12.000000Z" Retweets="1900" Likes="13838" Replies="1158" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="standard">
+      <Text>Sounds familiar</Text>
+    </Tweet>
+    <Tweet ID="1901532081844302082" CreatedAt="2025-03-17T07:12:31.000000Z" Retweets="12770" Likes="86017" Replies="5796" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="standard">
+      <Text>🔥🔥</Text>
+    </Tweet>
+    <Tweet ID="1901522313855815728" CreatedAt="2025-03-17T06:33:42.000000Z" Retweets="7713" Likes="46435" Replies="2713" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="reference">
+      <Text>https://t.co/BCZu9CBw3T</Text>
+    </Tweet>
+    <Tweet ID="1901483973668225312" CreatedAt="2025-03-17T04:01:21.000000Z" Retweets="172" Likes="2455" Replies="161" IsReply="true" IsRetweet="false" Topics="" Sentiment="positive" Style="conversational">
+      <Text>@GuntherEagleman @dbongino Great</Text>
+    </Tweet>
+    <Tweet ID="1901483632994197853" CreatedAt="2025-03-17T04:00:00.000000Z" Retweets="89" Likes="986" Replies="106" IsReply="true" IsRetweet="false" Topics="" Sentiment="negative" Style="conversational">
+      <Text>@Pro__Trading @jonfavs Dems hate losing voters. That’s his real issue.</Text>
+    </Tweet>
+    <Tweet ID="1901470670774518086" CreatedAt="2025-03-17T03:08:30.000000Z" Retweets="21252" Likes="108448" Replies="4233" IsReply="false" IsRetweet="false" Topics="yes" Sentiment="neutral" Style="standard">
+      <Text>Yes</Text>
+    </Tweet>
+    <Tweet ID="1901470303756144847" CreatedAt="2025-03-17T03:07:02.000000Z" Retweets="139" Likes="2035" Replies="143" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@BasedMikeLee ❤️</Text>
+    </Tweet>
+    <Tweet ID="1901469809688166486" CreatedAt="2025-03-17T03:05:04.000000Z" Retweets="13994" Likes="62323" Replies="2675" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="reference">
+      <Text>https://t.co/MAkwXVYBqQ</Text>
+    </Tweet>
+    <Tweet ID="1901469431206703402" CreatedAt="2025-03-17T03:03:34.000000Z" Retweets="94" Likes="1155" Replies="88" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@amuse Yup</Text>
+    </Tweet>
+    <Tweet ID="1901462857557979181" CreatedAt="2025-03-17T02:37:27.000000Z" Retweets="83" Likes="1237" Replies="162" IsReply="true" IsRetweet="false" Topics="wow" Sentiment="neutral" Style="conversational">
+      <Text>@visegrad24 Wow</Text>
+    </Tweet>
+    <Tweet ID="1901447128175480971" CreatedAt="2025-03-17T01:34:57.000000Z" Retweets="11316" Likes="70935" Replies="3237" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="standard">
+      <Text>🇺🇸🇺🇸</Text>
+    </Tweet>
+    <Tweet ID="1901415777489592456" CreatedAt="2025-03-16T23:30:22.000000Z" Retweets="42234" Likes="315658" Replies="11135" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="reference">
+      <Text>❤️🚀🚀❤️
+ https://t.co/aAkJRKsu1Q</Text>
+    </Tweet>
+    <Tweet ID="1901415251330912324" CreatedAt="2025-03-16T23:28:17.000000Z" Retweets="1412" Likes="14155" Replies="1600" IsReply="true" IsRetweet="false" Topics="people" Sentiment="negative" Style="standard">
+      <Text>Whatever you think the rules should be, they should be consistent for all people and countries</Text>
+    </Tweet>
+    <Tweet ID="1901414619081580624" CreatedAt="2025-03-16T23:25:46.000000Z" Retweets="18325" Likes="124480" Replies="4481" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="standard">
+      <Text>Valid question</Text>
+    </Tweet>
+    <Tweet ID="1901414482964099238" CreatedAt="2025-03-16T23:25:13.000000Z" Retweets="541" Likes="10739" Replies="426" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@visegrad24 They are in for a very rude awakening.</Text>
+    </Tweet>
+    <Tweet ID="1901413807454666924" CreatedAt="2025-03-16T23:22:32.000000Z" Retweets="14989" Likes="134415" Replies="6166" IsReply="false" IsRetweet="false" Topics="" Sentiment="positive" Style="standard">
+      <Text>Good idea</Text>
+    </Tweet>
+    <Tweet ID="1901409234798907568" CreatedAt="2025-03-16T23:04:22.000000Z" Retweets="210" Likes="2362" Replies="221" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@WesternLensman Groan</Text>
+    </Tweet>
+    <Tweet ID="1901392564776739187" CreatedAt="2025-03-16T21:58:08.000000Z" Retweets="115" Likes="1571" Replies="114" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@Eric_Schmitt 💯😂</Text>
+    </Tweet>
+    <Tweet ID="1901392047463903486" CreatedAt="2025-03-16T21:56:04.000000Z" Retweets="5717" Likes="37405" Replies="3861" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="standard">
+      <Text>Such is my nature</Text>
+    </Tweet>
+    <Tweet ID="1901391795097047395" CreatedAt="2025-03-16T21:55:04.000000Z" Retweets="69" Likes="1003" Replies="91" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@MsMelChen Exactly</Text>
+    </Tweet>
+    <Tweet ID="1901391446004928697" CreatedAt="2025-03-16T21:53:41.000000Z" Retweets="260" Likes="3094" Replies="240" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@teslaownersSV It was definitely him. What a coward.</Text>
+    </Tweet>
+    <Tweet ID="1901383630678524205" CreatedAt="2025-03-16T21:22:38.000000Z" Retweets="28651" Likes="238614" Replies="6791" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="standard">
+      <Text>🎯🤣</Text>
+    </Tweet>
+    <Tweet ID="1901380871732461841" CreatedAt="2025-03-16T21:11:40.000000Z" Retweets="268" Likes="2410" Replies="345" IsReply="true" IsRetweet="false" Topics="crazy,people" Sentiment="neutral" Style="exclamatory,conversational">
+      <Text>@WholeMarsBlog The legacy media is making people so crazy that they’re firebombing Tesla Superchargers!</Text>
+    </Tweet>
+    <Tweet ID="1901379732253319171" CreatedAt="2025-03-16T21:07:08.000000Z" Retweets="52" Likes="811" Replies="82" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@LukeSlywaker 🔥😂</Text>
+    </Tweet>
+    <Tweet ID="1901379371899727989" CreatedAt="2025-03-16T21:05:42.000000Z" Retweets="61" Likes="1245" Replies="82" IsReply="true" IsRetweet="false" Topics="" Sentiment="positive" Style="conversational">
+      <Text>@RichardRyan Nice</Text>
+    </Tweet>
+    <Tweet ID="1901379262567059530" CreatedAt="2025-03-16T21:05:16.000000Z" Retweets="60" Likes="942" Replies="58" IsReply="true" IsRetweet="false" Topics="cool" Sentiment="neutral" Style="conversational">
+      <Text>@edwards345 That was cool</Text>
+    </Tweet>
+    <Tweet ID="1901379036678627721" CreatedAt="2025-03-16T21:04:22.000000Z" Retweets="49" Likes="834" Replies="75" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@isaiah_p_taylor 😜</Text>
+    </Tweet>
+    <Tweet ID="1901378771825160666" CreatedAt="2025-03-16T21:03:19.000000Z" Retweets="426" Likes="5058" Replies="273" IsReply="true" IsRetweet="false" Topics="wow" Sentiment="neutral" Style="conversational">
+      <Text>@LauraLoomer @realDonaldTrump @NPR Wow</Text>
+    </Tweet>
+    <Tweet ID="1901378548817863100" CreatedAt="2025-03-16T21:02:26.000000Z" Retweets="58" Likes="728" Replies="63" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@markpinc Makes sense</Text>
+    </Tweet>
+    <Tweet ID="1901298811579797668" CreatedAt="2025-03-16T15:45:35.000000Z" Retweets="448" Likes="4322" Replies="337" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@mrddmia Impeach</Text>
+    </Tweet>
+    <Tweet ID="1901298430107889730" CreatedAt="2025-03-16T15:44:04.000000Z" Retweets="1196" Likes="27446" Replies="356" IsReply="true" IsRetweet="false" Topics="" Sentiment="positive" Style="conversational">
+      <Text>@nayibbukele Much appreciated</Text>
+    </Tweet>
+    <Tweet ID="1901297596464849370" CreatedAt="2025-03-16T15:40:46.000000Z" Retweets="15531" Likes="104459" Replies="6405" IsReply="false" IsRetweet="false" Topics="" Sentiment="negative" Style="standard">
+      <Text>Massive problem. Being fixed.</Text>
+    </Tweet>
+    <Tweet ID="1901297461093642262" CreatedAt="2025-03-16T15:40:13.000000Z" Retweets="19930" Likes="104836" Replies="4412" IsReply="false" IsRetweet="false" Topics="" Sentiment="positive" Style="standard">
+      <Text>The public is wise to the Democratic Party scams and their funding via bogus taxpayer-funded NGOs is being turned off</Text>
+    </Tweet>
+    <Tweet ID="1901296748020064762" CreatedAt="2025-03-16T15:37:23.000000Z" Retweets="466" Likes="14306" Replies="190" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@nayibbukele 😂</Text>
+    </Tweet>
+    <Tweet ID="1901229979016311041" CreatedAt="2025-03-16T11:12:04.000000Z" Retweets="204" Likes="3939" Replies="317" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="exclamatory,conversational">
+      <Text>@iamyesyouareno !!</Text>
+    </Tweet>
+    <Tweet ID="1901213716927926766" CreatedAt="2025-03-16T10:07:27.000000Z" Retweets="14247" Likes="88219" Replies="4464" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="exclamatory">
+      <Text>New app to assist in self-deportation!</Text>
+    </Tweet>
+    <Tweet ID="1901210984720544122" CreatedAt="2025-03-16T09:56:36.000000Z" Retweets="27354" Likes="122085" Replies="5231" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="reference,conversational">
+      <Text>Well said by @KariLake 
+ https://t.co/xxo4ZkZKkD</Text>
+    </Tweet>
+    <Tweet ID="1901209991253541221" CreatedAt="2025-03-16T09:52:39.000000Z" Retweets="43906" Likes="513540" Replies="8799" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="standard">
+      <Text>😂</Text>
+    </Tweet>
+    <Tweet ID="1901209063322456402" CreatedAt="2025-03-16T09:48:58.000000Z" Retweets="51942" Likes="333376" Replies="16114" IsReply="false" IsRetweet="false" Topics="spacex,dragon" Sentiment="neutral" Style="standard">
+      <Text>SpaceX Dragon ship arrives at the Space Station</Text>
+    </Tweet>
+    <Tweet ID="1901205055144952105" CreatedAt="2025-03-16T09:33:02.000000Z" Retweets="6050" Likes="62825" Replies="2493" IsReply="false" IsRetweet="false" Topics="true" Sentiment="neutral" Style="standard">
+      <Text>True</Text>
+    </Tweet>
+    <Tweet ID="1901204835711455288" CreatedAt="2025-03-16T09:32:10.000000Z" Retweets="43823" Likes="825963" Replies="55856" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="reference">
+      <Text>Going back to this haircut https://t.co/t4AzVR104K</Text>
+    </Tweet>
+    <Tweet ID="1901202278679208048" CreatedAt="2025-03-16T09:22:00.000000Z" Retweets="9934" Likes="93889" Replies="8927" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>Just @Grok it</Text>
+    </Tweet>
+    <Tweet ID="1901201693162779099" CreatedAt="2025-03-16T09:19:40.000000Z" Retweets="38377" Likes="161583" Replies="12449" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="exclamatory">
+      <Text>The Democrats are doing this, because they plan to use illegals to turn America into a permanent single party state!</Text>
+    </Tweet>
+    <Tweet ID="1901200935075918146" CreatedAt="2025-03-16T09:16:40.000000Z" Retweets="36679" Likes="141714" Replies="6573" IsReply="false" IsRetweet="false" Topics="government" Sentiment="neutral" Style="exclamatory">
+      <Text>The government was spending a quarter billion dollars of your taxpayer money per year on an empty building!</Text>
+    </Tweet>
+    <Tweet ID="1901200426021654896" CreatedAt="2025-03-16T09:14:38.000000Z" Retweets="16827" Likes="165067" Replies="7032" IsReply="false" IsRetweet="false" Topics="" Sentiment="positive" Style="standard">
+      <Text>It does look awesome</Text>
+    </Tweet>
+    <Tweet ID="1901200314973245480" CreatedAt="2025-03-16T09:14:12.000000Z" Retweets="24923" Likes="95147" Replies="3166" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="standard">
+      <Text>Exactly</Text>
+    </Tweet>
+    <Tweet ID="1901197792560775305" CreatedAt="2025-03-16T09:04:10.000000Z" Retweets="4363" Likes="45007" Replies="1708" IsReply="false" IsRetweet="false" Topics="cool" Sentiment="neutral" Style="standard">
+      <Text>Cool 😎</Text>
+    </Tweet>
+    <Tweet ID="1901195900568928406" CreatedAt="2025-03-16T08:56:39.000000Z" Retweets="37443" Likes="235221" Replies="15814" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="standard">
+      <Text>Necessary</Text>
+    </Tweet>
+    <Tweet ID="1901195718947213601" CreatedAt="2025-03-16T08:55:56.000000Z" Retweets="90" Likes="1101" Replies="98" IsReply="true" IsRetweet="false" Topics="true" Sentiment="neutral" Style="conversational">
+      <Text>@visegrad24 True</Text>
+    </Tweet>
+    <Tweet ID="1901195628207636831" CreatedAt="2025-03-16T08:55:34.000000Z" Retweets="1083" Likes="9032" Replies="502" IsReply="true" IsRetweet="false" Topics="government" Sentiment="neutral" Style="conversational">
+      <Text>@RupertLowe10 If the government stops paying them to stay, most will leave of their own accord</Text>
+    </Tweet>
+    <Tweet ID="1901151339997966811" CreatedAt="2025-03-16T05:59:35.000000Z" Retweets="14407" Likes="82264" Replies="2674" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="standard">
+      <Text>💯</Text>
+    </Tweet>
+    <Tweet ID="1901151139447349513" CreatedAt="2025-03-16T05:58:47.000000Z" Retweets="45699" Likes="346507" Replies="15619" IsReply="false" IsRetweet="false" Topics="spacex,dragon" Sentiment="neutral" Style="reference">
+      <Text>SpaceX Dragon docks with Space Station
+ https://t.co/nQMLO1U9gP</Text>
+    </Tweet>
+    <Tweet ID="1901149438027915265" CreatedAt="2025-03-16T05:52:02.000000Z" Retweets="274" Likes="5901" Replies="235" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="exclamatory,conversational">
+      <Text>@libsoftiktok !!</Text>
+    </Tweet>
+    <Tweet ID="1901149189825823228" CreatedAt="2025-03-16T05:51:03.000000Z" Retweets="62071" Likes="469189" Replies="21054" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="reference">
+      <Text>https://t.co/EDlTOMkImS</Text>
+    </Tweet>
+    <Tweet ID="1901148795389280673" CreatedAt="2025-03-16T05:49:29.000000Z" Retweets="120" Likes="1608" Replies="177" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@MarioNawfal 🥰</Text>
+    </Tweet>
+    <Tweet ID="1901146186787979336" CreatedAt="2025-03-16T05:39:07.000000Z" Retweets="24878" Likes="157660" Replies="5163" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="reference">
+      <Text>https://t.co/Hex9fi2fMD</Text>
+    </Tweet>
+    <Tweet ID="1901135867516739937" CreatedAt="2025-03-16T04:58:06.000000Z" Retweets="300" Likes="2558" Replies="203" IsReply="true" IsRetweet="false" Topics="government,left" Sentiment="neutral" Style="conversational">
+      <Text>@Inevitablewest A majority certainly will. 
+That is why the left will stop at nothing to prevent turning off of government handouts to illegals. That is their future voter base.</Text>
+    </Tweet>
+    <Tweet ID="1901134403595612259" CreatedAt="2025-03-16T04:52:17.000000Z" Retweets="183" Likes="5364" Replies="246" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="question,conversational">
+      <Text>@RupertLowe10 Are you expecting more or does this mean a 75% generational population decline?</Text>
+    </Tweet>
+    <Tweet ID="1901133404260732974" CreatedAt="2025-03-16T04:48:19.000000Z" Retweets="11838" Likes="97156" Replies="4835" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="reference">
+      <Text>https://t.co/n3mk9qiPrv</Text>
+    </Tweet>
+    <Tweet ID="1901132667996787188" CreatedAt="2025-03-16T04:45:24.000000Z" Retweets="111" Likes="1404" Replies="240" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@stevenmarkryan Mars</Text>
+    </Tweet>
+    <Tweet ID="1901120175144833105" CreatedAt="2025-03-16T03:55:45.000000Z" Retweets="60" Likes="1223" Replies="124" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@Rothmus 😂</Text>
+    </Tweet>
+    <Tweet ID="1901120097076343075" CreatedAt="2025-03-16T03:55:26.000000Z" Retweets="13363" Likes="103268" Replies="6045" IsReply="false" IsRetweet="false" Topics="dragon" Sentiment="neutral" Style="exclamatory,reference,conversational">
+      <Text>The @SpaceX Dragon is about to dock with the @Space_Station!
+In a few days, Dragon will bring back the astronauts. 
+ https://t.co/1kD2DjgRbK</Text>
+    </Tweet>
+    <Tweet ID="1901119618825011618" CreatedAt="2025-03-16T03:53:32.000000Z" Retweets="85" Likes="779" Replies="86" IsReply="true" IsRetweet="false" Topics="wow" Sentiment="neutral" Style="conversational">
+      <Text>@MZHemingway Wow</Text>
+    </Tweet>
+    <Tweet ID="1901057939403608167" CreatedAt="2025-03-15T23:48:27.000000Z" Retweets="30435" Likes="369650" Replies="11719" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="reference">
+      <Text>https://t.co/LrQm7VZIXJ</Text>
+    </Tweet>
+    <Tweet ID="1901023662569918898" CreatedAt="2025-03-15T21:32:15.000000Z" Retweets="117" Likes="2393" Replies="235" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@RobSchneider @Tesla ❤️</Text>
+    </Tweet>
+    <Tweet ID="1901023587626103152" CreatedAt="2025-03-15T21:31:57.000000Z" Retweets="71" Likes="1322" Replies="116" IsReply="true" IsRetweet="false" Topics="cool" Sentiment="neutral" Style="conversational">
+      <Text>@Teslaconomics Cool</Text>
+    </Tweet>
+    <Tweet ID="1901023552045785541" CreatedAt="2025-03-15T21:31:48.000000Z" Retweets="45" Likes="722" Replies="48" IsReply="true" IsRetweet="false" Topics="true" Sentiment="neutral" Style="conversational">
+      <Text>@levie True</Text>
+    </Tweet>
+    <Tweet ID="1901021886907379905" CreatedAt="2025-03-15T21:25:11.000000Z" Retweets="62" Likes="2412" Replies="161" IsReply="true" IsRetweet="false" Topics="" Sentiment="positive" Style="conversational">
+      <Text>@AngelaBelcamino Good question</Text>
+    </Tweet>
+    <Tweet ID="1901021728257474705" CreatedAt="2025-03-15T21:24:33.000000Z" Retweets="408" Likes="7110" Replies="226" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@stillgray 🦾🇺🇸</Text>
+    </Tweet>
+    <Tweet ID="1901021586313953619" CreatedAt="2025-03-15T21:24:00.000000Z" Retweets="87" Likes="1412" Replies="113" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@listen_2learn ❤️</Text>
+    </Tweet>
+    <Tweet ID="1901019487811281263" CreatedAt="2025-03-15T21:15:39.000000Z" Retweets="187" Likes="2499" Replies="150" IsReply="true" IsRetweet="false" Topics="" Sentiment="negative" Style="conversational">
+      <Text>@BreannaMorello Concerning</Text>
+    </Tweet>
+    <Tweet ID="1901013894824370449" CreatedAt="2025-03-15T20:53:26.000000Z" Retweets="122" Likes="1606" Replies="102" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@BasedMikeLee 🔥🔥</Text>
+    </Tweet>
+    <Tweet ID="1901013162754740239" CreatedAt="2025-03-15T20:50:31.000000Z" Retweets="26563" Likes="225983" Replies="12473" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="reference">
+      <Text>https://t.co/ZWIrggzIJg</Text>
+    </Tweet>
+    <Tweet ID="1901012256919257421" CreatedAt="2025-03-15T20:46:55.000000Z" Retweets="75" Likes="1453" Replies="116" IsReply="true" IsRetweet="false" Topics="crazy" Sentiment="neutral" Style="conversational">
+      <Text>@farzyness Crazy world</Text>
+    </Tweet>
+    <Tweet ID="1901012125687890370" CreatedAt="2025-03-15T20:46:24.000000Z" Retweets="72" Likes="1220" Replies="82" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@profstonge @grok 😂</Text>
+    </Tweet>
+    <Tweet ID="1901010987655852369" CreatedAt="2025-03-15T20:41:53.000000Z" Retweets="775" Likes="4111" Replies="563" IsReply="true" IsRetweet="false" Topics="government" Sentiment="positive" Style="exclamatory,reference,conversational">
+      <Text>@stillgray While winding down this global government propaganda agency, it has temporarily been renamed the Department of Propaganda Everywhere (DOPE). 
+Much more accurate name!
+And the new logo is a big improvement 😂 https://t.co/5EZXI4qN7b</Text>
+    </Tweet>
+    <Tweet ID="1901010300947886089" CreatedAt="2025-03-15T20:39:09.000000Z" Retweets="102" Likes="1346" Replies="82" IsReply="true" IsRetweet="false" Topics="yes" Sentiment="neutral" Style="conversational">
+      <Text>@stillgray Yes</Text>
+    </Tweet>
+    <Tweet ID="1901009662377656731" CreatedAt="2025-03-15T20:36:37.000000Z" Retweets="23217" Likes="171510" Replies="6960" IsReply="false" IsRetweet="false" Topics="" Sentiment="positive" Style="exclamatory,conversational">
+      <Text>Congratulations @SpaceX team on three successful rocket flights in half a day!</Text>
+    </Tweet>
+    <Tweet ID="1900932031225168185" CreatedAt="2025-03-15T15:28:08.000000Z" Retweets="486" Likes="9491" Replies="728" IsReply="true" IsRetweet="false" Topics="crazy,people" Sentiment="neutral" Style="conversational">
+      <Text>@CollinRugg Crazy people. Naturally, he drives a Subaru …</Text>
+    </Tweet>
+    <Tweet ID="1900927475149951107" CreatedAt="2025-03-15T15:10:02.000000Z" Retweets="20763" Likes="160110" Replies="4988" IsReply="false" IsRetweet="false" Topics="" Sentiment="positive" Style="standard">
+      <Text>Fate loves irony</Text>
+    </Tweet>
+    <Tweet ID="1900926420408279198" CreatedAt="2025-03-15T15:05:50.000000Z" Retweets="409" Likes="5195" Replies="576" IsReply="true" IsRetweet="false" Topics="" Sentiment="positive" Style="exclamatory,conversational">
+      <Text>@amuse Lil X has great instincts!</Text>
+    </Tweet>
+    <Tweet ID="1900925853002834004" CreatedAt="2025-03-15T15:03:35.000000Z" Retweets="80" Likes="1138" Replies="113" IsReply="true" IsRetweet="false" Topics="crazy" Sentiment="neutral" Style="conversational">
+      <Text>@stillgray Crazy</Text>
+    </Tweet>
+    <Tweet ID="1900925582470172735" CreatedAt="2025-03-15T15:02:31.000000Z" Retweets="18860" Likes="87417" Replies="4827" IsReply="false" IsRetweet="false" Topics="true" Sentiment="neutral" Style="standard">
+      <Text>True</Text>
+    </Tweet>
+    <Tweet ID="1900873930132324644" CreatedAt="2025-03-15T11:37:16.000000Z" Retweets="475" Likes="5403" Replies="722" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@BreitbartNews This woman is evil</Text>
+    </Tweet>
+    <Tweet ID="1900873458457673747" CreatedAt="2025-03-15T11:35:23.000000Z" Retweets="179" Likes="3826" Replies="149" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="exclamatory,conversational">
+      <Text>@RadioEuropes !!</Text>
+    </Tweet>
+    <Tweet ID="1900873112163401921" CreatedAt="2025-03-15T11:34:01.000000Z" Retweets="96" Likes="1428" Replies="260" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@cb_doge @grok</Text>
+    </Tweet>
+    <Tweet ID="1900865473161441291" CreatedAt="2025-03-15T11:03:39.000000Z" Retweets="168" Likes="4517" Replies="360" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@MarioNawfal 😀</Text>
+    </Tweet>
+    <Tweet ID="1900864832611451315" CreatedAt="2025-03-15T11:01:07.000000Z" Retweets="322" Likes="2900" Replies="468" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@MarioNawfal We want to make it so that anyone can travel to Mars if they would like</Text>
+    </Tweet>
+    <Tweet ID="1900864399075623128" CreatedAt="2025-03-15T10:59:23.000000Z" Retweets="16513" Likes="148068" Replies="5543" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="standard">
+      <Text>😂</Text>
+    </Tweet>
+    <Tweet ID="1900863634000990678" CreatedAt="2025-03-15T10:56:21.000000Z" Retweets="3536" Likes="34179" Replies="2727" IsReply="false" IsRetweet="false" Topics="" Sentiment="neutral" Style="standard">
+      <Text>Tesla self-driving is smooth</Text>
+    </Tweet>
+    <Tweet ID="1900860205031682075" CreatedAt="2025-03-15T10:42:43.000000Z" Retweets="90" Likes="1279" Replies="248" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@cb_doge @grok</Text>
+    </Tweet>
+    <Tweet ID="1900859436203155705" CreatedAt="2025-03-15T10:39:40.000000Z" Retweets="104" Likes="3022" Replies="122" IsReply="true" IsRetweet="false" Topics="yes" Sentiment="neutral" Style="conversational">
+      <Text>@mrshelby101 Yes</Text>
+    </Tweet>
+    <Tweet ID="1900859237904879876" CreatedAt="2025-03-15T10:38:53.000000Z" Retweets="88" Likes="1418" Replies="204" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@cb_doge Yeah</Text>
+    </Tweet>
+    <Tweet ID="1900858831237767246" CreatedAt="2025-03-15T10:37:16.000000Z" Retweets="12923" Likes="83629" Replies="4791" IsReply="false" IsRetweet="false" Topics="spacex" Sentiment="neutral" Style="standard">
+      <Text>SpaceX will launch over 90% of all of Earth’s payload mass to orbit this year. 
+China will be ~5% and rest of world, including rest of America, around 5%.
+When Starship is launching at high rate, SpaceX will probably carry &gt;99% of Earth’s payload mass to orbit. This is necessary to make Mars a self-sustaining civilization.</Text>
+    </Tweet>
+    <Tweet ID="1900857183849336893" CreatedAt="2025-03-15T10:30:43.000000Z" Retweets="90" Likes="1074" Replies="87" IsReply="true" IsRetweet="false" Topics="" Sentiment="neutral" Style="conversational">
+      <Text>@Sadie_NC 😂</Text>
+    </Tweet>
+  </Tweets>
+</TwitterData>

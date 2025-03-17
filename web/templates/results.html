@@ -1,62 +1,129 @@
+<!-- web/templates/results.html (improved version) -->
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-md-10 offset-md-1">
-        <div class="card">
-            <div class="card-header bg-success text-white">
-                <h3 class="card-title mb-0">
-                    <i class="fas fa-check-circle"></i> Analysis Complete
-                </h3>
+<div class="dashboard-header mb-4">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="display-5 fw-bold">
+                <i class="fas fa-chart-line text-primary"></i> 
+                @{{ result.account_info.screen_name }} Analysis
+            </h1>
+            <p class="lead text-muted">
+                Analysis of {{ "{:,}".format(result.tweet_count) }} tweets completed on {{ now.strftime('%B %d, %Y') }}
+            </p>
+        </div>
+        <div class="col-md-4 text-end">
+            <div class="dropdown">
+                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown">
+                    <i class="fas fa-download"></i> Export Results
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+                    <li><a class="dropdown-item" href="{{ url_for('download_file', job_path=result.relative_path, filename=result.files.csv_simple) }}">
+                        <i class="fas fa-file-csv me-2"></i> Simple CSV
+                    </a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('download_file', job_path=result.relative_path, filename=result.files.csv_analysis) }}">
+                        <i class="fas fa-file-csv me-2"></i> Analysis CSV
+                    </a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('download_file', job_path=result.relative_path, filename=result.files.xml) }}">
+                        <i class="fas fa-file-code me-2"></i> XML
+                    </a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('download_file', job_path=result.relative_path, filename=result.files.summary) }}">
+                        <i class="fas fa-file-alt me-2"></i> Summary Text
+                    </a></li>
+                </ul>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Profile Overview Card -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card dashboard-card h-100">
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4 text-center">
-                        {% if result.account_info.profile_image %}
-                        <img src="{{ result.account_info.profile_image }}" alt="Profile" class="img-thumbnail rounded-circle mb-3" style="width: 150px; height: 150px;">
-                        {% else %}
-                        <div class="bg-secondary rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 150px; height: 150px;">
-                            <i class="fas fa-user fa-5x text-white"></i>
-                        </div>
-                        {% endif %}
-                        <h4>@{{ result.account_info.screen_name }}</h4>
-                        <p class="lead">{{ result.account_info.name }}</p>
-                        <div class="d-flex justify-content-around mb-3">
-                            <div class="text-center">
-                                <h5>{{ "{:,}".format(result.account_info.followers) }}</h5>
-                                <small class="text-muted">Followers</small>
-                            </div>
-                            <div class="text-center">
-                                <h5>{{ "{:,}".format(result.account_info.following) }}</h5>
-                                <small class="text-muted">Following</small>
-                            </div>
-                            <div class="text-center">
-                                <h5>{{ "{:,}".format(result.account_info.tweets) }}</h5>
-                                <small class="text-muted">Tweets</small>
-                            </div>
+                <div class="text-center mb-3">
+                    {% if result.account_info.profile_image %}
+                    <img src="{{ result.account_info.profile_image }}" alt="Profile" class="rounded-circle profile-image mb-3">
+                    {% else %}
+                    <div class="bg-secondary rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center profile-image">
+                        <i class="fas fa-user fa-3x text-white"></i>
+                    </div>
+                    {% endif %}
+                    <h4 class="mb-0">{{ result.account_info.name }}</h4>
+                    <p class="text-muted">@{{ result.account_info.screen_name }}</p>
+                </div>
+                
+                <div class="row text-center stats-container">
+                    <div class="col-4">
+                        <div class="stat-item">
+                            <h3 class="mb-0">{{ "{:,}".format(result.account_info.followers) }}</h3>
+                            <span class="stat-label">Followers</span>
                         </div>
                     </div>
-                    <div class="col-md-8">
-                        <h4>Analysis Summary</h4>
-                        <p>Successfully analyzed <strong>{{ "{:,}".format(result.tweet_count) }}</strong> tweets from <strong>@{{ result.username }}</strong>.</p>
-                        
-                        <h5 class="mt-4">Download Results</h5>
-                        <div class="list-group">
-                            <a href="{{ url_for('download_file', job_path=result.relative_path, filename=result.files.csv_simple) }}" class="list-group-item list-group-item-action">
-                                <i class="fas fa-file-csv"></i> Simple CSV (just tweet text and timestamp)
-                            </a>
-                            <a href="{{ url_for('download_file', job_path=result.relative_path, filename=result.files.csv_analysis) }}" class="list-group-item list-group-item-action">
-                                <i class="fas fa-file-csv"></i> Analysis CSV (tweets with engagement and sentiment)
-                            </a>
-                            <a href="{{ url_for('download_file', job_path=result.relative_path, filename=result.files.xml) }}" class="list-group-item list-group-item-action">
-                                <i class="fas fa-file-code"></i> XML (complete analysis with style patterns)
-                            </a>
-                            <a href="{{ url_for('download_file', job_path=result.relative_path, filename=result.files.summary) }}" class="list-group-item list-group-item-action">
-                                <i class="fas fa-file-alt"></i> Summary Text (human-readable analysis)
-                            </a>
-                            <a href="{{ url_for('download_file', job_path=result.relative_path, filename=result.files.account_info) }}" class="list-group-item list-group-item-action">
-                                <i class="fas fa-file-code"></i> Account Info JSON
-                            </a>
+                    <div class="col-4">
+                        <div class="stat-item">
+                            <h3 class="mb-0">{{ "{:,}".format(result.account_info.following) }}</h3>
+                            <span class="stat-label">Following</span>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="stat-item">
+                            <h3 class="mb-0">{{ "{:,}".format(result.account_info.tweets) }}</h3>
+                            <span class="stat-label">Tweets</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Key Metrics Cards -->
+    <div class="col-md-8">
+        <div class="row h-100">
+            <!-- Sentiment Distribution -->
+            <div class="col-md-4 mb-4 mb-md-0">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body text-center">
+                        <div class="metric-icon mb-3">
+                            <i class="fas fa-smile fa-2x text-success"></i>
+                        </div>
+                        <h5 class="card-title">Sentiment</h5>
+                        <canvas id="sentiment-chart" height="120"></canvas>
+                        <div class="mt-2 small text-muted">
+                            Overall sentiment of analyzed tweets
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tweet Type Distribution -->
+            <div class="col-md-4 mb-4 mb-md-0">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body text-center">
+                        <div class="metric-icon mb-3">
+                            <i class="fas fa-reply fa-2x text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Tweet Types</h5>
+                        <canvas id="tweet-types-chart" height="120"></canvas>
+                        <div class="mt-2 small text-muted">
+                            Distribution of regular tweets vs. replies
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Engagement Metrics -->
+            <div class="col-md-4">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body text-center">
+                        <div class="metric-icon mb-3">
+                            <i class="fas fa-chart-bar fa-2x text-warning"></i>
+                        </div>
+                        <h5 class="card-title">Engagement</h5>
+                        <canvas id="engagement-chart" height="120"></canvas>
+                        <div class="mt-2 small text-muted">
+                            Average engagement per tweet
                         </div>
                     </div>
                 </div>
@@ -65,24 +132,64 @@
     </div>
 </div>
 
-<!-- Data Visualization Section -->
+<!-- Content Analysis Section -->
 <div class="row mb-4">
-    <div class="col-md-10 offset-md-1">
-        <div class="card">
-            <div class="card-header bg-dark text-white">
-                <h4 class="mb-0">Analysis Visualization</h4>
+    <!-- Topics & Keywords -->
+    <div class="col-md-6">
+        <div class="card dashboard-card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-tag me-2"></i> Top Topics & Keywords
+                </h5>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="chart-container">
-                            <canvas id="sentiment-chart"></canvas>
+                <canvas id="topics-chart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Writing Style Analysis -->
+    <div class="col-md-6">
+        <div class="card dashboard-card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-pen-fancy me-2"></i> Writing Style
+                </h5>
+            </div>
+            <div class="card-body">
+                <div id="writing-style-container">
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <div class="style-metric">
+                                <h6>Formality</h6>
+                                <div class="progress">
+                                    <div id="formality-bar" class="progress-bar bg-info" role="progressbar" style="width: 65%"></div>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <small>Informal</small>
+                                    <small>Formal</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="style-metric">
+                                <h6>Complexity</h6>
+                                <div class="progress">
+                                    <div id="complexity-bar" class="progress-bar bg-primary" role="progressbar" style="width: 45%"></div>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <small>Simple</small>
+                                    <small>Complex</small>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="chart-container">
-                            <canvas id="topics-chart"></canvas>
-                        </div>
+                    
+                    <div class="style-insights">
+                        <h6>Style Insights</h6>
+                        <ul class="style-insights-list" id="style-insights-list">
+                            <!-- This will be populated by JavaScript -->
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -90,31 +197,106 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-10 offset-md-1">
-        <div class="card">
-            <div class="card-header bg-dark text-white">
-                <h4 class="mb-0">Writing Style Analysis</h4>
-            </div>
-            <div class="card-body">
-                <pre id="summary-content" class="bg-light p-3 rounded" style="max-height: 500px; overflow-y: auto;">{{ result.summary_content }}</pre>
-            </div>
-            <div class="card-footer">
-                <div class="text-center">
-                    <a href="{{ url_for('index') }}" class="btn btn-primary me-2">
-                        <i class="fas fa-home"></i> Home
-                    </a>
-                    <a href="{{ url_for('list_jobs') }}" class="btn btn-secondary">
-                        <i class="fas fa-list"></i> All Analyses
-                    </a>
+<!-- Tweet Table with Filters -->
+<div class="card dashboard-card mb-4">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">
+                <i class="fab fa-twitter me-2"></i> Tweet Analysis
+            </h5>
+            <div class="tweet-filters">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-outline-secondary active" data-filter="all">All</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-filter="positive">Positive</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-filter="negative">Negative</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-filter="high-engagement">High Engagement</button>
                 </div>
             </div>
         </div>
     </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover" id="tweets-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Tweet</th>
+                        <th scope="col">Engagement</th>
+                        <th scope="col">Sentiment</th>
+                        <th scope="col">Topics</th>
+                    </tr>
+                </thead>
+                <tbody id="tweets-table-body">
+                    <!-- This will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+        <div class="d-flex justify-content-center mt-3">
+            <nav aria-label="Tweet pagination">
+                <ul class="pagination" id="tweets-pagination">
+                    <!-- This will be populated by JavaScript -->
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- Text Analysis Summary -->
+<div class="card dashboard-card mb-4">
+    <div class="card-header">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-file-alt me-2"></i> Analysis Summary
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="summary-container">
+            <div class="summary-tabs">
+                <ul class="nav nav-tabs" id="summaryTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="highlights-tab" data-bs-toggle="tab" data-bs-target="#highlights" type="button" role="tab">
+                            Highlights
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="full-summary-tab" data-bs-toggle="tab" data-bs-target="#full-summary" type="button" role="tab">
+                            Full Summary
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            <div class="tab-content mt-3" id="summaryTabsContent">
+                <div class="tab-pane fade show active" id="highlights" role="tabpanel">
+                    <div id="summary-highlights">
+                        <!-- Key highlights will be extracted by JavaScript -->
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="full-summary" role="tabpanel">
+                    <pre id="summary-content" class="bg-light p-3 rounded" style="max-height: 500px; overflow-y: auto;">{{ result.summary_content }}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Action buttons -->
+<div class="text-center mb-5">
+    <a href="{{ url_for('index') }}" class="btn btn-primary me-2">
+        <i class="fas fa-home"></i> Home
+    </a>
+    <a href="{{ url_for('list_jobs') }}" class="btn btn-secondary">
+        <i class="fas fa-list"></i> All Analyses
+    </a>
 </div>
 {% endblock %}
 
 {% block scripts %}
-<!-- Include the visualization script -->
-<script src="{{ url_for('static', filename='js/visualization.js') }}"></script>
+<!-- Include the enhanced visualization script -->
+<script src="{{ url_for('static', filename='js/dashboard-visualization.js') }}"></script>
+<script>
+    // Initialize the dashboard with data
+    document.addEventListener('DOMContentLoaded', function() {
+        // Extract data from the summary content for visualizations
+        initializeDashboard('{{ result.summary_content|tojson }}');
+    });
+</script>
 {% endblock %}

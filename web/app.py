@@ -293,6 +293,90 @@ def analyze():
     return redirect(url_for('job_status', job_id=job_id))
 
 @app.route('/job/<job_id>')
+def prepare_dashboard_data(tweets, account_info):
+    """
+    Prepare structured data for the dashboard
+    """
+    if not tweets:
+        return {}
+    
+    # Extract basic metrics
+    tweet_count = len(tweets)
+    reply_count = sum(1 for t in tweets if t.get('in_reply_to_status_id_str') is not None)
+    retweet_count = sum(1 for t in tweets if t.get('retweeted_status') is not None)
+    
+    # Calculate percentages
+    reply_percentage = (reply_count / tweet_count) * 100 if tweet_count > 0 else 0
+    retweet_percentage = (retweet_count / tweet_count) * 100 if tweet_count > 0 else 0
+    
+    # Calculate engagement metrics
+    total_likes = sum(t.get('favorite_count', 0) or 0 for t in tweets)
+    total_retweets = sum(t.get('retweet_count', 0) or 0 for t in tweets)
+    total_replies = sum(t.get('reply_count', 0) or 0 for t in tweets)
+    
+    avg_likes = total_likes / tweet_count if tweet_count > 0 else 0
+    avg_retweets = total_retweets / tweet_count if tweet_count > 0 else 0
+    avg_replies = total_replies / tweet_count if tweet_count > 0 else 0
+    
+    # Prepare simplified tweet list for table view
+    dashboard_tweets = []
+    for tweet in tweets[:100]:  # Limit to latest 100 tweets for performance
+        # Skip retweets as they don't have as much analytical value
+        if tweet.get('retweeted_status'):
+            continue
+            
+        created_at = tweet.get('tweet_created_at', '') or tweet.get('created_at', '')
+        text = tweet.get('full_text', '') or tweet.get('text', '')
+        
+        # Calculate engagement score
+        engagement = (tweet.get('favorite_count', 0) or 0) + \
+                    ((tweet.get('retweet_count', 0) or 0) * 2) + \
+                    ((tweet.get('reply_count', 0) or 0) * 3)
+        
+        # Determine sentiment (this would come from your analysis)
+        # In a real implementation, this would be from your processing pipeline
+        sentiment = "neutral"
+        if 'sentiment' in tweet.get('tags', {}):
+            sentiment = tweet.get('tags', {}).get('sentiment')
+            
+        # Extract topics
+        topics = []
+        if 'topics' in tweet.get('tags', {}):
+            topics = tweet.get('tags', {}).get('topics', [])
+        
+        dashboard_tweets.append({
+            'id': tweet.get('id_str', ''),
+            'created_at': created_at,
+            'text': text,
+            'engagement': engagement,
+            'sentiment': sentiment,
+            'topics': topics,
+            'is_reply': tweet.get('in_reply_to_status_id_str') is not None
+        })
+    
+    # Sort by engagement for high-impact tweets
+    dashboard_tweets.sort(key=lambda x: x['engagement'], reverse=True)
+    
+    return {
+        'metrics': {
+            'tweet_count': tweet_count,
+            'reply_percentage': reply_percentage,
+            'retweet_percentage': retweet_percentage,
+            'avg_likes': avg_likes,
+            'avg_retweets': avg_retweets,
+            'avg_replies': avg_replies
+        },
+        'tweets': dashboard_tweets,
+        'account': {
+            'name': account_info.get('name', ''),
+            'screen_name': account_info.get('screen_name', ''),
+            'followers_count': account_info.get('followers_count', 0),
+            'friends_count': account_info.get('friends_count', 0),
+            'statuses_count': account_info.get('statuses_count', 0),
+            'profile_image_url': account_info.get('profile_image_url_https', '')
+        }
+    }
+
 def job_status(job_id):
     """Show job status page"""
     # Check if the job exists
@@ -305,16 +389,45 @@ def job_status(job_id):
         result = job_results[job_id]
         logs = job_logs.get(job_id, [])
         
-        # If it was successful, render the results template
+        # If it was successful, render the results template with dashboard data
         if result['status'] == 'completed':
-            return render_template('results.html', result=result, logs=logs, job_id=job_id)
-        else:
-            # If it failed, show error
-            flash(f"Analysis failed: {result.get('error_message', 'Unknown error')}", "error")
-            return render_template('job_status.html', job_id=job_id, error=True, logs=logs)
-    
-    # If job is still running, show status page
-    return render_template('job_status.html', job_id=job_id)
+            # Get the analysis results path
+            output_folder = result['output_folder']
+            
+            # Load tweet data if available (for interactive dashboard)
+            dashboard_data = {}
+            try:
+                with open(os.path.join(output_folder, 'dashboard_data.json'), 'r', encoding='utf-8') as f:
+                    dashboard_data = json.load(f)
+            except (FileNotFoundError, json.JSONDecodeError):
+                # If dashboard data doesn't exist, try to prepare it
+                try:
+                    # This assumes you have raw tweets available - adapt as needed
+                    raw_tweets_path = os.path.join(output_folder, 'raw_tweets.json')
+                    account_info_path = os.path.join(output_folder, 'account_info.json')
+                    
+                    if os.path.exists(raw_tweets_path) and os.path.exists(account_info_path):
+                        with open(raw_tweets_path, 'r', encoding='utf-8') as f:
+                            raw_tweets = json.load(f)
+                        with open(account_info_path, 'r', encoding='utf-8') as f:
+                            account_info = json.load(f)
+                            
+                        dashboard_data = prepare_dashboard_data(raw_tweets, account_info)
+                        
+                        # Save for future use
+                        with open(os.path.join(output_folder, 'dashboard_data.json'), 'w', encoding='utf-8') as f:
+                            json.dump(dashboard_data, f)
+                except Exception as e:
+                    logger.error(f"Error preparing dashboard data: {e}")
+            
+            return render_template('results.html', 
+                                result=result, 
+                                logs=logs, 
+                                job_id=job_id,
+                                dashboard_data=dashboard_data)
+            
+            # If job is still running, show status page
+            return render_template('job_status.html', job_id=job_id)
 
 @app.route('/api/job_status/<job_id>')
 def api_job_status(job_id):
@@ -422,3 +535,89 @@ if __name__ == '__main__':
     os.makedirs('output', exist_ok=True)
     # Run Flask app
     app.run(debug=True, host='0.0.0.0', port=8000)
+
+# Add this function to web/app.py to extract tweet data for the dashboard
+
+def prepare_dashboard_data(tweets, account_info):
+    """
+    Prepare structured data for the dashboard
+    """
+    if not tweets:
+        return {}
+    
+    # Extract basic metrics
+    tweet_count = len(tweets)
+    reply_count = sum(1 for t in tweets if t.get('in_reply_to_status_id_str') is not None)
+    retweet_count = sum(1 for t in tweets if t.get('retweeted_status') is not None)
+    
+    # Calculate percentages
+    reply_percentage = (reply_count / tweet_count) * 100 if tweet_count > 0 else 0
+    retweet_percentage = (retweet_count / tweet_count) * 100 if tweet_count > 0 else 0
+    
+    # Calculate engagement metrics
+    total_likes = sum(t.get('favorite_count', 0) or 0 for t in tweets)
+    total_retweets = sum(t.get('retweet_count', 0) or 0 for t in tweets)
+    total_replies = sum(t.get('reply_count', 0) or 0 for t in tweets)
+    
+    avg_likes = total_likes / tweet_count if tweet_count > 0 else 0
+    avg_retweets = total_retweets / tweet_count if tweet_count > 0 else 0
+    avg_replies = total_replies / tweet_count if tweet_count > 0 else 0
+    
+    # Prepare simplified tweet list for table view
+    dashboard_tweets = []
+    for tweet in tweets[:100]:  # Limit to latest 100 tweets for performance
+        # Skip retweets as they don't have as much analytical value
+        if tweet.get('retweeted_status'):
+            continue
+            
+        created_at = tweet.get('tweet_created_at', '') or tweet.get('created_at', '')
+        text = tweet.get('full_text', '') or tweet.get('text', '')
+        
+        # Calculate engagement score
+        engagement = (tweet.get('favorite_count', 0) or 0) + \
+                    ((tweet.get('retweet_count', 0) or 0) * 2) + \
+                    ((tweet.get('reply_count', 0) or 0) * 3)
+        
+        # Determine sentiment (this would come from your analysis)
+        # In a real implementation, this would be from your processing pipeline
+        sentiment = "neutral"
+        if 'sentiment' in tweet.get('tags', {}):
+            sentiment = tweet.get('tags', {}).get('sentiment')
+            
+        # Extract topics
+        topics = []
+        if 'topics' in tweet.get('tags', {}):
+            topics = tweet.get('tags', {}).get('topics', [])
+        
+        dashboard_tweets.append({
+            'id': tweet.get('id_str', ''),
+            'created_at': created_at,
+            'text': text,
+            'engagement': engagement,
+            'sentiment': sentiment,
+            'topics': topics,
+            'is_reply': tweet.get('in_reply_to_status_id_str') is not None
+        })
+    
+    # Sort by engagement for high-impact tweets
+    dashboard_tweets.sort(key=lambda x: x['engagement'], reverse=True)
+    
+    return {
+        'metrics': {
+            'tweet_count': tweet_count,
+            'reply_percentage': reply_percentage,
+            'retweet_percentage': retweet_percentage,
+            'avg_likes': avg_likes,
+            'avg_retweets': avg_retweets,
+            'avg_replies': avg_replies
+        },
+        'tweets': dashboard_tweets,
+        'account': {
+            'name': account_info.get('name', ''),
+            'screen_name': account_info.get('screen_name', ''),
+            'followers_count': account_info.get('followers_count', 0),
+            'friends_count': account_info.get('friends_count', 0),
+            'statuses_count': account_info.get('statuses_count', 0),
+            'profile_image_url': account_info.get('profile_image_url_https', '')
+        }
+    }
