@@ -1,7 +1,6 @@
 """
 Output Generator - Module for generating output in different formats
 """
-from .language_analyzer_light import LightweightLanguageAnalyzer
 import csv
 import json
 import logging
@@ -11,6 +10,9 @@ import re
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Any
+from collections import Counter
+
+from .language_analyzer_light import LightweightLanguageAnalyzer
 
 class OutputGenerator:
     """Class for generating output in different formats (CSV, XML)"""
@@ -425,305 +427,300 @@ class OutputGenerator:
             self.logger.error(f"Error saving account info: {e}")
             return ""
     
-        def save_summary_text(self, tweets: List[Dict], folder_path: Path, account_info: Dict = None) -> str:
-            """
-            Generate a rich human-readable summary text file with advanced language analysis
-            
-            Args:
-                tweets: List of tweet objects
-                folder_path: Path to the output folder
-                account_info: Account information dictionary
-                
-            Returns:
-                Path to the saved file
-            """
-            if not tweets:
-                self.logger.warning("No tweets to summarize")
-                return ""
-            
-            try:
-                # Use the new lightweight language analyzer
-                analyzer = LightweightLanguageAnalyzer()
-                advanced_analysis = analyzer.analyze(tweets)
-                
-                # Prepare summary text
-                summary_lines = []
-                
-                # Add header
-                summary_lines.append("# TWITTER ACCOUNT ANALYSIS SUMMARY")
-                summary_lines.append("=" * 80)
-                
-                # Add account info
-                if account_info:
-                    summary_lines.append(f"\n## ACCOUNT: @{account_info.get('screen_name', 'Unknown')}")
-                    summary_lines.append(f"Name: {account_info.get('name', 'Unknown')}")
-                    summary_lines.append(f"Followers: {account_info.get('followers_count', 0):,}")
-                    summary_lines.append(f"Following: {account_info.get('friends_count', 0):,}")
-                    summary_lines.append(f"Total tweets: {account_info.get('statuses_count', 0):,}")
-                    summary_lines.append(f"Account created: {account_info.get('created_at', 'Unknown')}")
-                    if account_info.get('description'):
-                        summary_lines.append(f"Bio: {account_info.get('description', '')}")
-                
-                # Add data collection info
-                summary_lines.append(f"\n## DATA COLLECTION")
-                summary_lines.append(f"Tweets analyzed: {len(tweets):,}")
-                summary_lines.append(f"Analysis date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-                
-                # Add writing style analysis
-                if "writing_style" in advanced_analysis:
-                    style = advanced_analysis["writing_style"]
-                    summary_lines.append(f"\n## WRITING STYLE ANALYSIS")
-                    
-                    # Voice and formality
-                    if "voice" in style and "formality" in style:
-                        voice = style["voice"]
-                        formality = style["formality"]
-                        
-                        summary_lines.append("\n### Voice and Tone")
-                        summary_lines.append(f"Dominant voice: {voice.get('dominant_voice', 'Neutral')}")
-                        
-                        # Add voice breakdown
-                        summary_lines.append(f"- First person (I, we, me): {voice.get('first_person_ratio', 0)*100:.1f}%")
-                        summary_lines.append(f"- Second person (you, your): {voice.get('second_person_ratio', 0)*100:.1f}%")
-                        summary_lines.append(f"- Third person (he, she, they): {voice.get('third_person_ratio', 0)*100:.1f}%")
-                        
-                        # Add formality
-                        summary_lines.append(f"\nFormality level: {formality.get('level', 'Neutral')}")
-                        summary_lines.append(f"- Formal markers: {formality.get('formal_markers', 0)} instances")
-                        summary_lines.append(f"- Informal markers: {formality.get('informal_markers', 0)} instances")
-                    
-                    # Sentence complexity
-                    if "sentence_structure" in style:
-                        structure = style["sentence_structure"]
-                        summary_lines.append("\n### Sentence Structure")
-                        summary_lines.append(f"Average sentence length: {structure.get('avg_sentence_length', 0):.1f} words")
-                        
-                        # Add question and exclamation stats
-                        summary_lines.append(f"Question sentences: {structure.get('question_ratio', 0)*100:.1f}% of total")
-                        summary_lines.append(f"Exclamatory sentences: {structure.get('exclamation_ratio', 0)*100:.1f}% of total")
-                    
-                    # Vocabulary richness
-                    if "vocabulary" in style:
-                        vocabulary = style["vocabulary"]
-                        summary_lines.append("\n### Vocabulary")
-                        summary_lines.append(f"Vocabulary richness: {vocabulary.get('richness', 0):.3f}")
-                        summary_lines.append("(Higher values indicate more diverse vocabulary)")
-                        
-                        # Add top words
-                        if "top_words" in vocabulary:
-                            summary_lines.append("\nMost frequent significant words:")
-                            for word_data in vocabulary["top_words"][:10]:
-                                summary_lines.append(f"- {word_data['word']}: {word_data['count']} times")
-                        
-                        # Add top phrases
-                        if "top_phrases" in vocabulary:
-                            summary_lines.append("\nCharacteristic phrases:")
-                            for phrase_data in vocabulary["top_phrases"]:
-                                summary_lines.append(f"- \"{phrase_data['phrase']}\": {phrase_data['count']} times")
-                
-                # Add readability analysis
-                if "readability" in advanced_analysis:
-                    readability = advanced_analysis["readability"]
-                    summary_lines.append(f"\n## READABILITY ANALYSIS")
-                    
-                    if "scores" in readability:
-                        scores = readability["scores"]
-                        summary_lines.append(f"Flesch Reading Ease: {scores.get('flesch_reading_ease', 0):.1f}/100")
-                        summary_lines.append(f"Flesch-Kincaid Grade Level: {scores.get('flesch_kincaid_grade', 0):.1f}")
-                        
-                        # Add interpretation
-                        summary_lines.append(f"\nInterpretation: {readability.get('interpretation', 'N/A')}")
-                        
-                        # Add Twitter optimization insight
-                        is_optimal = readability.get('is_optimal_for_social', False)
-                        if is_optimal:
-                            summary_lines.append("\nThis readability level is optimal for Twitter/social media.")
-                        else:
-                            summary_lines.append("\nThis readability level may not be optimal for Twitter/social media.")
-                        
-                        # Add words per tweet
-                        summary_lines.append(f"\nAverage words per tweet: {readability.get('avg_words_per_tweet', 0):.1f}")
-                        
-                        # Add readability insights
-                        if "insights" in readability:
-                            summary_lines.append("\nReadability insights:")
-                            for insight in readability["insights"]:
-                                summary_lines.append(f"- {insight}")
-                
-                # Add temporal analysis if available
-                if "temporal" in advanced_analysis:
-                    temporal = advanced_analysis["temporal"]
-                    
-                    if temporal.get("evolution_insights"):
-                        summary_lines.append(f"\n## WRITING EVOLUTION OVER TIME")
-                        summary_lines.append(f"Analysis period: {temporal.get('start_date', 'Unknown')} to {temporal.get('end_date', 'Unknown')}")
-                        summary_lines.append(f"Time segmentation: {temporal.get('period_type', 'Unknown')}")
-                        
-                        # Add key insights
-                        summary_lines.append("\nKey trends:")
-                        for insight in temporal.get("evolution_insights", []):
-                            summary_lines.append(f"- {insight}")
-                        
-                        # Add trend metrics
-                        if "trends" in temporal:
-                            trends = temporal["trends"]
-                            metrics_to_show = [
-                                ('sentiment', 'Sentiment'), 
-                                ('readability', 'Readability'),
-                                ('avg_engagement', 'Engagement')
-                            ]
-                            
-                            summary_lines.append("\nDetailed Trends:")
-                            for metric_key, metric_name in metrics_to_show:
-                                if f"{metric_key}_trend" in trends:
-                                    trend = trends[f"{metric_key}_trend"]
-                                    change = trends.get(f"{metric_key}_change_pct", 0)
-                                    summary_lines.append(f"- {metric_name}: {trend} ({change:+.1f}%)")
-                
-                # Add engagement analysis
-                if "engagement" in advanced_analysis:
-                    engagement = advanced_analysis["engagement"]
-                    
-                    if "engagement_insights" in engagement and engagement["engagement_insights"]:
-                        summary_lines.append(f"\n## ENGAGEMENT PATTERNS")
-                        
-                        # Add key insights
-                        summary_lines.append("What drives higher engagement:")
-                        for insight in engagement.get("engagement_insights", []):
-                            summary_lines.append(f"- {insight}")
-                        
-                        # Add high vs low comparison highlights
-                        if "high_vs_low_comparison" in engagement:
-                            comparison = engagement["high_vs_low_comparison"]
-                            
-                            summary_lines.append("\nHigh vs. Low Engagement Content Comparison:")
-                            
-                            # Readability comparison
-                            if "readability" in comparison:
-                                read_comp = comparison["readability"]
-                                diff = read_comp.get("difference", 0)
-                                if abs(diff) > 5:
-                                    if diff > 0:
-                                        summary_lines.append("- High-engagement content is more readable")
-                                    else:
-                                        summary_lines.append("- High-engagement content is more complex")
-                            
-                            # Sentiment comparison
-                            if "sentiment" in comparison:
-                                sent_comp = comparison["sentiment"]
-                                diff = sent_comp.get("difference", 0)
-                                if abs(diff) > 0.2:
-                                    if diff > 0:
-                                        summary_lines.append("- High-engagement content is more positive")
-                                    else:
-                                        summary_lines.append("- High-engagement content is more critical/negative")
-                            
-                            # Length comparison
-                            if "avg_length" in comparison:
-                                len_comp = comparison["avg_length"]
-                                diff = len_comp.get("difference", 0)
-                                if abs(diff) > 3:
-                                    if diff > 0:
-                                        summary_lines.append(f"- High-engagement tweets are longer (by {diff:.1f} words)")
-                                    else:
-                                        summary_lines.append(f"- High-engagement tweets are shorter (by {abs(diff):.1f} words)")
-                        
-                        # Add top tweets
-                        if "top_engaging_tweets" in engagement and engagement["top_engaging_tweets"]:
-                            top_tweets = engagement["top_engaging_tweets"]
-                            summary_lines.append("\nMost engaging tweet examples:")
-                            for i, tweet in enumerate(top_tweets[:3], 1):
-                                summary_lines.append(f"{i}. \"{tweet.get('text', '')}\"")
-                                summary_lines.append(f"   Engagement: {tweet.get('engagement', 0)}")
-                
-                # Add persuasive language analysis
-                if "persuasive_patterns" in advanced_analysis:
-                    persuasive = advanced_analysis["persuasive_patterns"]
-                    
-                    summary_lines.append(f"\n## PERSUASIVE LANGUAGE PATTERNS")
-                    
-                    # Add persuasive style
-                    if "dominant_style" in persuasive:
-                        summary_lines.append(f"Dominant persuasive style: {persuasive.get('dominant_style', 'Mixed')}")
-                    
-                    # Add top persuasive markers
-                    if "top_markers" in persuasive:
-                        markers = persuasive["top_markers"]
-                        if markers:
-                            summary_lines.append("\nTop persuasive markers:")
-                            for marker, count in markers.items():
-                                summary_lines.append(f"- '{marker}': {count} instances")
-                    
-                    # Add other persuasive elements
-                    summary_lines.append(f"\nRhetorical questions: {persuasive.get('rhetorical_questions', 0)} instances")
-                    summary_lines.append(f"Call-to-action elements: {persuasive.get('calls_to_action', 0)} instances")
-                    summary_lines.append(f"Social proof references: {persuasive.get('social_proof_markers', 0)} instances")
-                    
-                    # Add persuasive insights
-                    if "insights" in persuasive:
-                        summary_lines.append("\nPersuasive style insights:")
-                        for insight in persuasive["insights"]:
-                            summary_lines.append(f"- {insight}")
-                
-                # Add practical insights
-                if "practical_insights" in advanced_analysis:
-                    practical = advanced_analysis["practical_insights"]
-                    
-                    summary_lines.append(f"\n## WRITING RECOMMENDATIONS")
-                    
-                    # Add specific recommendations
-                    if "writing_recommendations" in practical:
-                        recommendations = practical["writing_recommendations"]
-                        summary_lines.append("To emulate this writing style effectively:")
-                        for rec in recommendations:
-                            summary_lines.append(f"- {rec}")
-                    
-                    # Add key vocabulary
-                    if "vocabulary_themes" in practical:
-                        vocab = practical["vocabulary_themes"]
-                        
-                        # Add key nouns
-                        if "key_nouns" in vocab and vocab["key_nouns"]:
-                            summary_lines.append("\nCharacteristic nouns to incorporate:")
-                            summary_lines.append(", ".join(item["word"] for item in vocab["key_nouns"][:8]))
-                        
-                        # Add key verbs
-                        if "key_verbs" in vocab and vocab["key_verbs"]:
-                            summary_lines.append("\nCharacteristic verbs to incorporate:")
-                            summary_lines.append(", ".join(item["word"] for item in vocab["key_verbs"][:8]))
-                        
-                        # Add key adjectives
-                        if "key_adjectives" in vocab and vocab["key_adjectives"]:
-                            summary_lines.append("\nCharacteristic adjectives to incorporate:")
-                            summary_lines.append(", ".join(item["word"] for item in vocab["key_adjectives"][:8]))
-                    
-                    # Add emoji usage if relevant
-                    if "emoji_usage" in practical and practical["emoji_usage"].get("uses_emoji"):
-                        emoji_info = practical["emoji_usage"]
-                        if emoji_info.get("top_emojis"):
-                            summary_lines.append("\nCharacteristic emojis to incorporate:")
-                            emojis = [item["emoji"] for item in emoji_info.get("top_emojis", [])]
-                            summary_lines.append(" ".join(emojis[:10]))
-                
-                # Add footer
-                summary_lines.append("\n" + "=" * 80)
-                summary_lines.append("Generated by SocialScope-Tweets Advanced Language Analysis")
-                summary_lines.append(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-                
-                # Save to file
-                filename = folder_path / "writing_style_analysis.txt"
-                with open(filename, 'w', encoding='utf-8') as f:
-                    f.write('\n'.join(summary_lines))
-                
-                self.logger.info(f"Saved advanced writing style analysis to {filename}")
-                return str(filename)
-            
-            except Exception as e:
-                self.logger.error(f"Error saving advanced analysis: {e}")
-                # Fall back to basic summary if advanced analysis fails
-                return self._save_basic_summary(tweets, folder_path, account_info)
-
-    def _save_basic_summary(self, tweets: List[Dict], folder_path: Path, account_info: Dict = None) -> str:
+    def save_summary_text(self, tweets: List[Dict], folder_path: Path, account_info: Dict = None) -> str:
         """
-        Fall back to basic summary if advanced analysis fails
+        Generate a rich human-readable summary text file with advanced language analysis
+        
+        Args:
+            tweets: List of tweet objects
+            folder_path: Path to the output folder
+            account_info: Account information dictionary
+            
+        Returns:
+            Path to the saved file
         """
+        if not tweets:
+            self.logger.warning("No tweets to summarize")
+            return ""
+        
+        try:
+            # Use the new lightweight language analyzer
+            analyzer = LightweightLanguageAnalyzer()
+            advanced_analysis = analyzer.analyze(tweets)
+            
+            # Prepare summary text
+            summary_lines = []
+            
+            # Add header
+            summary_lines.append("# TWITTER ACCOUNT ANALYSIS SUMMARY")
+            summary_lines.append("=" * 80)
+            
+            # Add account info
+            if account_info:
+                summary_lines.append(f"\n## ACCOUNT: @{account_info.get('screen_name', 'Unknown')}")
+                summary_lines.append(f"Name: {account_info.get('name', 'Unknown')}")
+                summary_lines.append(f"Followers: {account_info.get('followers_count', 0):,}")
+                summary_lines.append(f"Following: {account_info.get('friends_count', 0):,}")
+                summary_lines.append(f"Total tweets: {account_info.get('statuses_count', 0):,}")
+                summary_lines.append(f"Account created: {account_info.get('created_at', 'Unknown')}")
+                if account_info.get('description'):
+                    summary_lines.append(f"Bio: {account_info.get('description', '')}")
+            
+            # Add data collection info
+            summary_lines.append(f"\n## DATA COLLECTION")
+            summary_lines.append(f"Tweets analyzed: {len(tweets):,}")
+            summary_lines.append(f"Analysis date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+            
+            # Add writing style analysis
+            if "writing_style" in advanced_analysis:
+                style = advanced_analysis["writing_style"]
+                summary_lines.append(f"\n## WRITING STYLE ANALYSIS")
+                
+                # Voice and formality
+                if "voice" in style and "formality" in style:
+                    voice = style["voice"]
+                    formality = style["formality"]
+                    
+                    summary_lines.append("\n### Voice and Tone")
+                    summary_lines.append(f"Dominant voice: {voice.get('dominant_voice', 'Neutral')}")
+                    
+                    # Add voice breakdown
+                    summary_lines.append(f"- First person (I, we, me): {voice.get('first_person_ratio', 0)*100:.1f}%")
+                    summary_lines.append(f"- Second person (you, your): {voice.get('second_person_ratio', 0)*100:.1f}%")
+                    summary_lines.append(f"- Third person (he, she, they): {voice.get('third_person_ratio', 0)*100:.1f}%")
+                    
+                    # Add formality
+                    summary_lines.append(f"\nFormality level: {formality.get('level', 'Neutral')}")
+                    summary_lines.append(f"- Formal markers: {formality.get('formal_markers', 0)} instances")
+                    summary_lines.append(f"- Informal markers: {formality.get('informal_markers', 0)} instances")
+                
+                # Sentence complexity
+                if "sentence_structure" in style:
+                    structure = style["sentence_structure"]
+                    summary_lines.append("\n### Sentence Structure")
+                    summary_lines.append(f"Average sentence length: {structure.get('avg_sentence_length', 0):.1f} words")
+                    
+                    # Add question and exclamation stats
+                    summary_lines.append(f"Question sentences: {structure.get('question_ratio', 0)*100:.1f}% of total")
+                    summary_lines.append(f"Exclamatory sentences: {structure.get('exclamation_ratio', 0)*100:.1f}% of total")
+                
+                # Vocabulary richness
+                if "vocabulary" in style:
+                    vocabulary = style["vocabulary"]
+                    summary_lines.append("\n### Vocabulary")
+                    summary_lines.append(f"Vocabulary richness: {vocabulary.get('richness', 0):.3f}")
+                    summary_lines.append("(Higher values indicate more diverse vocabulary)")
+                    
+                    # Add top words
+                    if "top_words" in vocabulary:
+                        summary_lines.append("\nMost frequent significant words:")
+                        for word_data in vocabulary["top_words"][:10]:
+                            summary_lines.append(f"- {word_data['word']}: {word_data['count']} times")
+                    
+                    # Add top phrases
+                    if "top_phrases" in vocabulary:
+                        summary_lines.append("\nCharacteristic phrases:")
+                        for phrase_data in vocabulary["top_phrases"]:
+                            summary_lines.append(f"- \"{phrase_data['phrase']}\": {phrase_data['count']} times")
+            
+            # Add readability analysis
+            if "readability" in advanced_analysis:
+                readability = advanced_analysis["readability"]
+                summary_lines.append(f"\n## READABILITY ANALYSIS")
+                
+                if "scores" in readability:
+                    scores = readability["scores"]
+                    summary_lines.append(f"Flesch Reading Ease: {scores.get('flesch_reading_ease', 0):.1f}/100")
+                    summary_lines.append(f"Flesch-Kincaid Grade Level: {scores.get('flesch_kincaid_grade', 0):.1f}")
+                    
+                    # Add interpretation
+                    summary_lines.append(f"\nInterpretation: {readability.get('interpretation', 'N/A')}")
+                    
+                    # Add Twitter optimization insight
+                    is_optimal = readability.get('is_optimal_for_social', False)
+                    if is_optimal:
+                        summary_lines.append("\nThis readability level is optimal for Twitter/social media.")
+                    else:
+                        summary_lines.append("\nThis readability level may not be optimal for Twitter/social media.")
+                    
+                    # Add words per tweet
+                    summary_lines.append(f"\nAverage words per tweet: {readability.get('avg_words_per_tweet', 0):.1f}")
+                    
+                    # Add readability insights
+                    if "insights" in readability:
+                        summary_lines.append("\nReadability insights:")
+                        for insight in readability["insights"]:
+                            summary_lines.append(f"- {insight}")
+            
+            # Add temporal analysis if available
+            if "temporal" in advanced_analysis:
+                temporal = advanced_analysis["temporal"]
+                
+                if temporal.get("evolution_insights"):
+                    summary_lines.append(f"\n## WRITING EVOLUTION OVER TIME")
+                    summary_lines.append(f"Analysis period: {temporal.get('start_date', 'Unknown')} to {temporal.get('end_date', 'Unknown')}")
+                    summary_lines.append(f"Time segmentation: {temporal.get('period_type', 'Unknown')}")
+                    
+                    # Add key insights
+                    summary_lines.append("\nKey trends:")
+                    for insight in temporal.get("evolution_insights", []):
+                        summary_lines.append(f"- {insight}")
+                    
+                    # Add trend metrics
+                    if "trends" in temporal:
+                        trends = temporal["trends"]
+                        metrics_to_show = [
+                            ('sentiment', 'Sentiment'), 
+                            ('readability', 'Readability'),
+                            ('avg_engagement', 'Engagement')
+                        ]
+                        
+                        summary_lines.append("\nDetailed Trends:")
+                        for metric_key, metric_name in metrics_to_show:
+                            if f"{metric_key}_trend" in trends:
+                                trend = trends[f"{metric_key}_trend"]
+                                change = trends.get(f"{metric_key}_change_pct", 0)
+                                summary_lines.append(f"- {metric_name}: {trend} ({change:+.1f}%)")
+            
+            # Add engagement analysis
+            if "engagement" in advanced_analysis:
+                engagement = advanced_analysis["engagement"]
+                
+                if "engagement_insights" in engagement and engagement["engagement_insights"]:
+                    summary_lines.append(f"\n## ENGAGEMENT PATTERNS")
+                    
+                    # Add key insights
+                    summary_lines.append("What drives higher engagement:")
+                    for insight in engagement.get("engagement_insights", []):
+                        summary_lines.append(f"- {insight}")
+                    
+                    # Add high vs low comparison highlights
+                    if "high_vs_low_comparison" in engagement:
+                        comparison = engagement["high_vs_low_comparison"]
+                        
+                        summary_lines.append("\nHigh vs. Low Engagement Content Comparison:")
+                        
+                        # Readability comparison
+                        if "readability" in comparison:
+                            read_comp = comparison["readability"]
+                            diff = read_comp.get("difference", 0)
+                            if abs(diff) > 5:
+                                if diff > 0:
+                                    summary_lines.append("- High-engagement content is more readable")
+                                else:
+                                    summary_lines.append("- High-engagement content is more complex")
+                        
+                        # Sentiment comparison
+                        if "sentiment" in comparison:
+                            sent_comp = comparison["sentiment"]
+                            diff = sent_comp.get("difference", 0)
+                            if abs(diff) > 0.2:
+                                if diff > 0:
+                                    summary_lines.append("- High-engagement content is more positive")
+                                else:
+                                    summary_lines.append("- High-engagement content is more critical/negative")
+                        
+                        # Length comparison
+                        if "avg_length" in comparison:
+                            len_comp = comparison["avg_length"]
+                            diff = len_comp.get("difference", 0)
+                            if abs(diff) > 3:
+                                if diff > 0:
+                                    summary_lines.append(f"- High-engagement tweets are longer (by {diff:.1f} words)")
+                                else:
+                                    summary_lines.append(f"- High-engagement tweets are shorter (by {abs(diff):.1f} words)")
+                    
+                    # Add top tweets
+                    if "top_engaging_tweets" in engagement and engagement["top_engaging_tweets"]:
+                        top_tweets = engagement["top_engaging_tweets"]
+                        summary_lines.append("\nMost engaging tweet examples:")
+                        for i, tweet in enumerate(top_tweets[:3], 1):
+                            summary_lines.append(f"{i}. \"{tweet.get('text', '')}\"")
+                            summary_lines.append(f"   Engagement: {tweet.get('engagement', 0)}")
+            
+            # Add persuasive language analysis
+            if "persuasive_patterns" in advanced_analysis:
+                persuasive = advanced_analysis["persuasive_patterns"]
+                
+                summary_lines.append(f"\n## PERSUASIVE LANGUAGE PATTERNS")
+                
+                # Add persuasive style
+                if "dominant_style" in persuasive:
+                    summary_lines.append(f"Dominant persuasive style: {persuasive.get('dominant_style', 'Mixed')}")
+                
+                # Add top persuasive markers
+                if "top_markers" in persuasive:
+                    markers = persuasive["top_markers"]
+                    if markers:
+                        summary_lines.append("\nTop persuasive markers:")
+                        for marker, count in markers.items():
+                            summary_lines.append(f"- '{marker}': {count} instances")
+                
+                # Add other persuasive elements
+                summary_lines.append(f"\nRhetorical questions: {persuasive.get('rhetorical_questions', 0)} instances")
+                summary_lines.append(f"Call-to-action elements: {persuasive.get('calls_to_action', 0)} instances")
+                summary_lines.append(f"Social proof references: {persuasive.get('social_proof_markers', 0)} instances")
+                
+                # Add persuasive insights
+                if "insights" in persuasive:
+                    summary_lines.append("\nPersuasive style insights:")
+                    for insight in persuasive["insights"]:
+                        summary_lines.append(f"- {insight}")
+            
+            # Add practical insights
+            if "practical_insights" in advanced_analysis:
+                practical = advanced_analysis["practical_insights"]
+                
+                summary_lines.append(f"\n## WRITING RECOMMENDATIONS")
+                
+                # Add specific recommendations
+                if "writing_recommendations" in practical:
+                    recommendations = practical["writing_recommendations"]
+                    summary_lines.append("To emulate this writing style effectively:")
+                    for rec in recommendations:
+                        summary_lines.append(f"- {rec}")
+                
+                # Add key vocabulary
+                if "vocabulary_themes" in practical:
+                    vocab = practical["vocabulary_themes"]
+                    
+                    # Add key nouns
+                    if "key_nouns" in vocab and vocab["key_nouns"]:
+                        summary_lines.append("\nCharacteristic nouns to incorporate:")
+                        summary_lines.append(", ".join(item["word"] for item in vocab["key_nouns"][:8]))
+                    
+                    # Add key verbs
+                    if "key_verbs" in vocab and vocab["key_verbs"]:
+                        summary_lines.append("\nCharacteristic verbs to incorporate:")
+                        summary_lines.append(", ".join(item["word"] for item in vocab["key_verbs"][:8]))
+                    
+                    # Add key adjectives
+                    if "key_adjectives" in vocab and vocab["key_adjectives"]:
+                        summary_lines.append("\nCharacteristic adjectives to incorporate:")
+                        summary_lines.append(", ".join(item["word"] for item in vocab["key_adjectives"][:8]))
+                
+                # Add emoji usage if relevant
+                if "emoji_usage" in practical and practical["emoji_usage"].get("uses_emoji"):
+                    emoji_info = practical["emoji_usage"]
+                    if emoji_info.get("top_emojis"):
+                        summary_lines.append("\nCharacteristic emojis to incorporate:")
+                        emojis = [item["emoji"] for item in emoji_info.get("top_emojis", [])]
+                        summary_lines.append(" ".join(emojis[:10]))
+            
+            # Add footer
+            summary_lines.append("\n" + "=" * 80)
+            summary_lines.append("Generated by SocialScope-Tweets Advanced Language Analysis")
+            summary_lines.append(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            
+            # Save to file
+            filename = folder_path / "writing_style_analysis.txt"
+            with open(filename, 'w', encoding='utf-8') as f:
+                f.write('\n'.join(summary_lines))
+            
+            self.logger.info(f"Saved advanced writing style analysis to {filename}")
+            return str(filename)
+        
+        except Exception as e:
+            self.logger.error(f"Error saving advanced analysis: {e}")
+            # Fall back to basic summary if advanced analysis fails
+            return self._save_basic_summary(tweets, folder_path, account_info)

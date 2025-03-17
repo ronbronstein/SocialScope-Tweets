@@ -2,11 +2,11 @@
 """
 Tweet Analyzer - Main script for fetching, processing, and saving tweets
 """
-from src.core.language_analyzer_light import LightweightLanguageAnalyzer
 import argparse
 import logging
 import sys
 import os
+import json  # Add this import for saving JSON data
 from datetime import datetime
 from pathlib import Path
 
@@ -17,6 +17,7 @@ from src.core.socialdata_client import SocialDataClient
 from src.core.tweet_fetcher import TweetFetcher
 from src.core.tweet_processor import TweetProcessor
 from src.core.output_generator import OutputGenerator
+from src.core.language_analyzer_light import LightweightLanguageAnalyzer
 
 def setup_logging(level=logging.INFO):
     """Set up logging configuration"""
