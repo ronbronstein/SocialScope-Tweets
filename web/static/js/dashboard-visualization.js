@@ -333,7 +333,6 @@ function createTopicsChart() {
 /**
  * Setup writing style indicators
  */
-/**
 function setupWritingStyleIndicators() {
     // Set formality and complexity values (these would be dynamically set in a real implementation)
     document.getElementById('formality-bar').style.width = '65%'; // Example value

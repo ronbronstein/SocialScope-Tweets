@@ -102,6 +102,8 @@ def main():
             end_date=end_date
         )
         logger.info(f"Fetched {len(tweets)} tweets")
+
+        output_gen.save_raw_data(tweets, output_folder)
         
         # Step 5: Process tweets
         logger.info("Processing tweets...")

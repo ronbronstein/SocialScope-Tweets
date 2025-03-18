@@ -17,6 +17,34 @@ from .language_analyzer_light import LightweightLanguageAnalyzer
 class OutputGenerator:
     """Class for generating output in different formats (CSV, XML)"""
     
+    def save_raw_data(self, tweets: List[Dict], folder_path: Path) -> str:
+        """
+        Save raw tweet data for dashboard visualizations
+        
+        Args:
+            tweets: List of raw tweet objects
+            folder_path: Path to the output folder
+            
+        Returns:
+            Path to the saved file
+        """
+        if not tweets:
+            self.logger.warning("No tweets to save")
+            return ""
+        
+        try:
+            # Save to file
+            filename = folder_path / "raw_tweets.json"
+            with open(filename, 'w', encoding='utf-8') as f:
+                json.dump(tweets, f)
+            
+            self.logger.info(f"Saved raw tweet data to {filename}")
+            return str(filename)
+        
+        except Exception as e:
+            self.logger.error(f"Error saving raw tweet data: {e}")
+            return ""
+
     def __init__(self, output_dir: str = "output"):
         """
         Initialize the output generator

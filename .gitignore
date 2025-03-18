@@ -37,6 +37,7 @@ cache/
 twitter_env/
 user_ids.json
 target_account.txt
+/web/output
 
 # IDE specific files
 .idea/
